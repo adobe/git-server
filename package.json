@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./index.js",
     "test": "mocha",
-    "lint": "populist lib/*.js lib/**/*.js"
+    "lint": "./node_modules/.bin/eslint lib/*.js lib/**/*.js"
   },
   "repository": {
     "type": "git",
