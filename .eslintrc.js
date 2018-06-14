@@ -14,6 +14,9 @@ module.exports = {
   'env': {
     'node': true
   },
+  // this is the root project for all sub modules. stop searching for any
+  // eslintrc files in parent directories.
+  'root': true,
   'parserOptions': {
     'sourceType': 'script',
     // async/await support
@@ -21,5 +24,6 @@ module.exports = {
   },
   'extends': 'airbnb',
   'rules': {
+    'strict': ['error', 'global']
    }
 };
