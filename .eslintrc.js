@@ -24,6 +24,6 @@ module.exports = {
   },
   'extends': 'airbnb',
   'rules': {
-    'strict': ['error', 'global']
+    'strict': 0
    }
 };
