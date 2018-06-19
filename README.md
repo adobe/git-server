@@ -26,9 +26,24 @@ The following protocols and APIs are currently supported:
 * [Git HTTP Transfer Protocols](#2-git-http-transfer-protocols)
 * [GitHub API v3](#3-github-api-v3)
 
+## Build & Install
+
+build `git-server` using
+
+```bash
+npm install
+```
+
+if you run into an error building configuring libssh2, this may be because you don't have the correct openssl libs installed, which can be remedied on MacOS Sierra and later (assuming the xcode 9 installed) via:
+
+```bash
+brew install openssl
+sudo xcode-select --install
+```
+
 ## Getting started
 
-`git-server` is configured via the `config.json` file which is expected to exist in the current working directory.
+`git-server` is configured via the `config.js` file which is expected to exist in the current working directory.
 
 ### 1. Create a local Git repository
 
