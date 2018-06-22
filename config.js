@@ -18,7 +18,7 @@ module.exports = {
   listen: {
     http: {
       port: 5000,
-      host: '0.0.0.0'
+      host: '0.0.0.0',
     },
     https: {
       // cert: if no file is specfied a selfsigned certificate will be generated on-the-fly
@@ -26,23 +26,24 @@ module.exports = {
       // key: if no file is specfied a key will be generated on-the-fly
       // key: './localhost.key',
       port: 5443,
-      host: '0.0.0.0'
-    }
+      host: '0.0.0.0',
+    },
   },
   subdomainMapping: {
-    // if enabled, <subdomain>.<baseDomain>/foo/bar/baz will be resolved/mapped to 127.0.0.1/<subdomain>/foo/bar/baz
+    // if enabled, <subdomain>.<baseDomain>/foo/bar/baz will be
+    // resolved/mapped to 127.0.0.1/<subdomain>/foo/bar/baz
     enable: true,
     baseDomains: [
       // some wildcarded DNS domains resolving to 127.0.0.1
       'localtest.me',
       'lvh.me',
       'vcap.me',
-      'lacolhost.com'
-    ]
+      'lacolhost.com',
+    ],
   },
   logs: {
     level: 'info',
     logsDir: './logs',
-    reqLogFormat: 'short' // used for morgan (request logging)
-  }
+    reqLogFormat: 'short', // used for morgan (request logging)
+  },
 };
