@@ -12,4 +12,4 @@
 
 'use strict';
 
-require('./lib/server');
+require('./lib/server').start();
