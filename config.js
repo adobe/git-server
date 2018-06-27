@@ -41,6 +41,16 @@ module.exports = {
       'lacolhost.com',
     ],
   },
+
+  // repository mapping. allows to 'mount' repositories outside the 'repoRoot' structure.
+  virtualRepos: {
+    demoOwner: {
+      demoRepo: {
+        path: './virtual/example',
+      },
+    },
+  },
+
   logs: {
     level: 'info',
     logsDir: './logs',
