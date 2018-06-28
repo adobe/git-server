@@ -15,6 +15,14 @@
 module.exports = {
   appTitle: 'Helix Git Server',
   repoRoot: './repos',
+  // repository mapping. allows to 'mount' repositories outside the 'repoRoot' structure.
+  virtualRepos: {
+    demoOwner: {
+      demoRepo: {
+        path: './virtual/example',
+      },
+    },
+  },
   listen: {
     http: {
       port: 5000,
@@ -41,16 +49,6 @@ module.exports = {
       'lacolhost.com',
     ],
   },
-
-  // repository mapping. allows to 'mount' repositories outside the 'repoRoot' structure.
-  virtualRepos: {
-    demoOwner: {
-      demoRepo: {
-        path: './virtual/example',
-      },
-    },
-  },
-
   logs: {
     level: 'info',
     logsDir: './logs',
