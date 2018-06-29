@@ -8,13 +8,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Git Server",
             "program": "${workspaceFolder}/index.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program (debug express)",
+            "name": "Git Server (debug express)",
             "program": "${workspaceFolder}/index.js",
             "env": {
                 "DEBUG": "express:*"
