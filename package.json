@@ -1,5 +1,5 @@
 {
-  "name": "git-server",
+  "name": "@adobe/git-server",
   "version": "0.0.1",
   "description": "serve a git repository over http(s)",
   "main": "index.js",
