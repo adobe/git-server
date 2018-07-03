@@ -28,17 +28,25 @@ The following protocols and APIs are currently supported:
 
 ## Build & Install
 
-build `git-server` using
+### Prerequisite
 
-```bash
-npm install
-```
+`git-server` includes a [nodegit](https://github.com/nodegit/nodegit) dependency, a native addon which will be built from source on `npm install`. A working toolchain (`gcc` etc)  is therefore required. See the platorm specific information below to install the toolchain (if not done so already).
 
-if you run into an error building configuring libssh2, this may be because you don't have the correct openssl libs installed, which can be remedied on MacOS Sierra and later (assuming the xcode 9 installed) via:
+#### macOS
 
+Run the following commands in a shell:
 ```bash
 brew install openssl
 sudo xcode-select --install
+```
+ [More information](https://github.com/nodejs/node-gyp#on-macos)
+
+### Installation
+
+Once you've made sure you meet above prerequisites you can build & install `git-server` using
+
+```bash
+npm install
 ```
 
 ## Getting started
