@@ -28,6 +28,8 @@ module.exports = {
       port: 5000,
       host: '0.0.0.0',
     },
+    /*
+    // https is optional
     https: {
       // cert: if no file is specfied a selfsigned certificate will be generated on-the-fly
       // cert: './localhost.crt',
@@ -36,6 +38,7 @@ module.exports = {
       port: 5443,
       host: '0.0.0.0',
     },
+    */
   },
   subdomainMapping: {
     // if enabled, <subdomain>.<baseDomain>/foo/bar/baz will be
