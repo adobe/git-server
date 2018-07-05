@@ -1,0 +1,44 @@
+version: 2
+jobs:
+  git-server:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:8
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
+      - run: 
+          command: npm install
+
+      - save_cache:
+          paths:
+            - git-server/node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: 
+          command: npx eslint lib/*.js lib/**/*.js
+
+#      - run: 
+#          command: BUILD_TAG=$(./node_modules/.bin/npm-snapshot $CIRCLE_BUILD_NUM) echo 'export BUILD_TAG=$BUILD_TAG' >> $BASH_ENV
+#          working_directory: prototypes/git-server
+
+#      - run: 
+#          name: Publish Snapshot
+#          command: npm publish --access public
+#          working_directory: prototypes/git-server
