@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  git-server:
+  build:
     docker:
       # specify the version you desire here
       - image: circleci/node:8
