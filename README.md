@@ -16,6 +16,23 @@
 │   └── <repo_2>
 ```
 
+Alternatively, a virtual repository mapping allows to 'mount' repositories independant of their location in the file system into a `<owner>/<repo>` hierarchy. A configuration example:
+
+```json
+  virtualRepos: {
+    owner1: {
+      repo1: {
+        path: './repo1',
+      },
+    },
+    owner2: {
+      repo2: {
+        path: '/repos/repo2',
+      },
+    },
+  },
+```
+
 Repositories exposed via `git-server` can be used just like any repository hosted on GitHub, 
 i.e. you can clone them and push changes to.
 The repository contents can be accessed with the same url patterns you would use to request files managed on GitHub.
