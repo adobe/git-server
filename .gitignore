@@ -204,5 +204,7 @@ venv.bak/
 # https://github.com/Huachao/vscode-restclient
 *.rest
 
+tmp/
+
 /modules/*
 /modules/parcel-plugin-jst/
