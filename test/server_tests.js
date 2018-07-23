@@ -15,6 +15,7 @@
 const assert = require('assert');
 const shell = require('shelljs');
 const path = require('path');
+const fse = require('fs-extra');
 const http = require('http');
 const https = require('https');
 const { URL } = require('url');
@@ -22,28 +23,47 @@ const server = require('../lib/server.js');
 const tcpPortUsed = require('tcp-port-used');
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
+const TEST_REPO_1 = path.resolve(TEST_DIR_DEFAULT, 'owner1/repo1');
 
 if (!shell.which('git')) {
   shell.echo('Sorry, this tests requires git');
   shell.exit(1);
 }
 
-async function assertStatus(url, status) {
+// todo: use replay ?
+async function assertHttp(url, status, spec) {
   const client = url.protocol === 'https:' ? https : http;
   return new Promise((resolve, reject) => {
+    let data = '';
     const options = {
       hostname: url.hostname,
       port: url.port,
-      path: url.path,
+      path: url.pathname,
       rejectUnauthorized: false,
     };
     client.get(options, (res) => {
       try {
         assert.equal(res.statusCode, status);
       } catch (e) {
+        res.resume();
         reject(e);
       }
-      resolve();
+
+      res
+        .on('data', (chunk) => {
+          data += chunk;
+        })
+        .on('end', () => {
+          try {
+            if (spec) {
+              const expected = fse.readFileSync(path.resolve(__dirname, 'specs', spec)).toString();
+              assert.equal(data, expected);
+            }
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
     }).on('error', (e) => {
       reject(e);
     });
@@ -55,10 +75,12 @@ async function checkPort(port, inUse) {
 }
 
 function initRepository(dir) {
+  const pwd = shell.pwd();
   shell.cd(dir);
   shell.exec('git init');
   shell.exec('git add -A');
   shell.exec('git commit -m"initial commit."');
+  shell.cd(pwd);
 }
 
 function removeRepository(dir) {
@@ -67,11 +89,11 @@ function removeRepository(dir) {
 
 describe('Server Test', () => {
   before(() => {
-    initRepository(TEST_DIR_DEFAULT);
+    initRepository(TEST_REPO_1);
   });
 
   after(() => {
-    removeRepository(TEST_DIR_DEFAULT);
+    removeRepository(TEST_REPO_1);
   });
 
   afterEach(async () => {
@@ -87,7 +109,7 @@ describe('Server Test', () => {
     });
     assert.equal(state.httpPort, 5000);
     assert.equal(state.httpsPort, -1);
-    await assertStatus(new URL(`http://localhost:${state.httpPort}`), 404);
+    await assertHttp(new URL(`http://localhost:${state.httpPort}`), 404);
     await server.stop();
     await checkPort(5000, false);
   });
@@ -104,7 +126,7 @@ describe('Server Test', () => {
     });
     assert.notEqual(state.httpPort, 5000);
     assert.equal(state.httpsPort, -1);
-    await assertStatus(new URL(`http://localhost:${state.httpPort}`), 404);
+    await assertHttp(new URL(`http://localhost:${state.httpPort}`), 404);
     await server.stop();
     await checkPort(state.httpPort, false);
   });
@@ -122,7 +144,7 @@ describe('Server Test', () => {
     });
     assert.equal(state.httpPort, 5000);
     assert.equal(state.httpsPort, 5443);
-    await assertStatus(new URL(`https://localhost:${state.httpsPort}`), 404);
+    await assertHttp(new URL(`https://localhost:${state.httpsPort}`), 404);
     await server.stop();
     await checkPort(5000, false);
     await checkPort(5443, false);
@@ -144,9 +166,79 @@ describe('Server Test', () => {
     assert.notEqual(state.httpPort, 5000);
     assert.notEqual(state.httpsPort, -1);
     assert.notEqual(state.httpsPort, 5443);
-    await assertStatus(new URL(`https://localhost:${state.httpsPort}`), 404);
+    await assertHttp(new URL(`https://localhost:${state.httpsPort}`), 404);
     await server.stop();
     await checkPort(state.httpPort, false);
     await checkPort(state.httpsPort, false);
+  });
+
+  it('Delivers raw content.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`), 200, 'expected_readme.md');
+    await server.stop();
+  });
+
+  it('Delivers 404 for raw content that does not exist.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/notexist.md`), 404);
+    await server.stop();
+  });
+
+  it('Delivers 404 for raw content for non-existing branch', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/repo1/blaster/README.md`), 404);
+    await server.stop();
+  });
+
+  it('Delivers 404 for raw content for non-existing repo', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/floppy/master/README.md`), 404);
+    await server.stop();
+  });
+
+  it('Delivers 404 for raw content for non-existing owner', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/noowner/repo1/master/README.md`), 404);
+    await server.stop();
   });
 });
