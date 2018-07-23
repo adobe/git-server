@@ -34,14 +34,31 @@ jobs:
       - run: 
           command: npx eslint lib/*.js lib/**/*.js
 
-#      - run: 
-#          command: BUILD_TAG=$(./node_modules/.bin/npm-snapshot $CIRCLE_BUILD_NUM) echo 'export BUILD_TAG=$BUILD_TAG' >> $BASH_ENV
-#          working_directory: prototypes/git-server
+      # run tests!
+      - run: mkdir junit
+      - run:
+          name: prepare test git user
+          command: git config --global user.email "you@example.com" && git config --global user.name "Your Name"
+      - run:
+          name: Running Tests
+          command: npx mocha --reporter mocha-junit-reporter
+          environment:
+            MOCHA_FILE: junit/test-results.xml
+          when: always
 
-#      - run: 
-#          name: Publish Snapshot
-#          command: npm publish --access public
-#          working_directory: prototypes/git-server
+
+      # get code coverage
+      - run:
+          name: Getting Code Coverage
+          command: npx istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec && npx codecov
+          environment:
+            MOCHA_FILE: junit/test-results.xml
+          when: always
+
+      - store_test_results:
+          path: junit
+      - store_artifacts:
+          path: junit
 
   publish-snapshot:
     docker:
