@@ -29,6 +29,7 @@
     "snyk": "^1.88.0"
   },
   "devDependencies": {
+    "codecov": "^3.0.4",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-header": "^1.2.0",
@@ -36,6 +37,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.9.1",
     "mocha": "^5.0.1",
+    "mocha-junit-reporter": "^1.17.0",
     "npm-snapshot": "^1.0.3",
     "nyc": "^12.0.2",
     "shelljs": "^0.8.2",
