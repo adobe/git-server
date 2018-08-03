@@ -27,8 +27,7 @@
     "nodegit": "^0.21.2",
     "pem": "^1.12.5",
     "snyk": "^1.88.0",
-    "winston": "^2.4.0",
-    "zlib": "^1.0.5"
+    "winston": "^2.4.0"
   },
   "devDependencies": {
     "codecov": "^3.0.4",
