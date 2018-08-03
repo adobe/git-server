@@ -1,5 +1,13 @@
 # git-server
 
+## Status
+[![codecov](https://img.shields.io/codecov/c/github/adobe/git-server.svg)](https://codecov.io/gh/adobe/git-server)
+[![CircleCI](https://img.shields.io/circleci/project/github/adobe/git-server.svg)](https://circleci.com/gh/adobe/git-server)
+[![GitHub license](https://img.shields.io/github/license/adobe/git-server.svg)](https://github.com/adobe/git-server/blob/master/LICENSE.txt)
+[![GitHub issues](https://img.shields.io/github/issues/adobe/git-server.svg)](https://github.com/adobe/git-server/issues)
+[![Greenkeeper badge](https://badges.greenkeeper.io/adobe/git-server.svg)](https://greenkeeper.io/)
+[![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/git-server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/git-server)
+
 ## Description
 
 `git-server` serves a hierarchy of local Git repositories to Git clients accessing the repository over `http://` and `https://` protocol.
