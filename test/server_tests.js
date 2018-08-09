@@ -491,4 +491,18 @@ describe('Server Test', () => {
     await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1`), 200);
     await server.stop();
   });
+
+  it('Delivers 200 for GitHub root view', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1`), 200);
+    await server.stop();
+  });
 });
