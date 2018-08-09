@@ -183,11 +183,13 @@ Only a small subset of the GitHub API will be supported:
 
 * [Get commits](https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository)
 
+* [Get archive link](https://developer.github.com/v3/repos/contents/#get-archive-link)
 
-Remote examples:
+  _Note:_  This method returns a `302` to a URL to download a tarball or zipball archive for a repository. `git-server` also supports an inofficial `https://codeload.github.com` endpoint that is not rate limited and that doesn't redirect:
 
-* `https://api.github.com/repos/adobe/project-helix/contents/README.md?ref=master`
-* `https://api.github.com/repos/adobe/project-helix/git/blobs/bf13fe66cbee379db6a3e4ebf0300b8bbc0f01b7`
+  * `https://codeload.github.com/{owner}/{repo}/[zip|tar.gz]/master`
+
+  Related issue/discussion: [#5 Support codeload.github.com](https://github.com/adobe/git-server/issues/5#issuecomment-403072428)
 
 Local examples:
 
@@ -202,5 +204,7 @@ _(not yet implemented)_
 
 Endpoint: `https://github.com/`
 
-e.g. `https://github.com/{owner}/{repo}`,
-     `https://github.com/{owner}/{repo}/blob/{branch}/path/to/file`
+e.g. 
+
+  `https://github.com/{owner}/{repo}`,
+  `https://github.com/{owner}/{repo}/blob/{branch}/path/to/file`
