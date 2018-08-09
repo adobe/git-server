@@ -353,4 +353,142 @@ describe('Server Test', () => {
     await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/tar.gz/master`), 200);
     await server.stop();
   });
+
+  it('Tests codeload subdomain mapping', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+      subdomainMapping: {
+        enable: true,
+        baseDomains: [
+          'localtest.me',
+        ],
+      },
+    });
+    await assertHttp(new URL(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`), 200);
+    await server.stop();
+  });
+
+  it('Tests codeload subdomain mapping', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+      subdomainMapping: {
+        enable: true,
+        baseDomains: [
+          'localtest.me',
+        ],
+      },
+    });
+    await assertHttp(new URL(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API list-commits', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=master`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API get-contents', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub blob view (existing resource)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README.md`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 404 for GitHub blob view (nonexisting resource)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README99.md`), 404);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub tree view (existing path)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 404 for GitHub tree view (nonexisting path)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/blahblah`), 404);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub root view', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1`), 200);
+    await server.stop();
+  });
 });
