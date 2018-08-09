@@ -241,4 +241,116 @@ describe('Server Test', () => {
     await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/noowner/repo1/master/README.md`), 404);
     await server.stop();
   });
+
+  it('Delivers 302 for GitHub API get-archive-link (zip)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/zipball/master`), 302);
+    await server.stop();
+  });
+
+  it('Delivers 302 for GitHub API get-archive-link (tar.gz)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/tarball/master`), 302);
+    await server.stop();
+  });
+
+  it('Delivers 302 for GitHub archive request (zip)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.zip`), 302);
+    await server.stop();
+  });
+
+  it('Delivers 302 for GitHub archive request (tar.gz)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.tar.gz`), 302);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub codeload request (zip)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.zip/master`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub codeload request (zip)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/master`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub codeload request (tar.gz)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.tar.gz/master`), 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub codeload request (tar.gz)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/tar.gz/master`), 200);
+    await server.stop();
+  });
 });
