@@ -26,7 +26,7 @@
 
 Alternatively, a virtual repository mapping allows to 'mount' repositories independant of their location in the file system into a `<owner>/<repo>` hierarchy. A configuration example:
 
-```json
+```js
   virtualRepos: {
     owner1: {
       repo1: {
