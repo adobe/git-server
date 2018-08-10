@@ -13,14 +13,17 @@
 /* global describe, before, after, afterEach, it */
 
 const assert = require('assert');
-const shell = require('shelljs');
 const path = require('path');
-const fse = require('fs-extra');
 const http = require('http');
 const https = require('https');
 const { URL } = require('url');
-const server = require('../lib/server.js');
+
+const shell = require('shelljs');
+const fse = require('fs-extra');
 const tcpPortUsed = require('tcp-port-used');
+const rp = require('request-promise-native');
+
+const server = require('../lib/server.js');
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
 const TEST_REPO_1 = path.resolve(TEST_DIR_DEFAULT, 'owner1/repo1');
@@ -30,7 +33,7 @@ if (!shell.which('git')) {
   shell.exit(1);
 }
 
-// todo: use replay ?
+// TODO: use replay ?
 async function assertHttp(url, status, spec) {
   const client = url.protocol === 'https:' ? https : http;
   return new Promise((resolve, reject) => {

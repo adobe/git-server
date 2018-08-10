@@ -43,6 +43,8 @@
     "mocha-junit-reporter": "^1.17.0",
     "npm-snapshot": "^1.0.3",
     "nyc": "^12.0.2",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5",
     "shelljs": "^0.8.2",
     "tcp-port-used": "^0.1.2"
   },
