@@ -495,7 +495,7 @@ describe('Server Test', () => {
     await server.stop();
   });
 
-  it('Delivers 200 for GitHub root view', async () => {
+  it('GitHub API get-content and get-blob', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: TEST_DIR_DEFAULT,
@@ -505,7 +505,15 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1`), 200);
+    const content = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`,
+      json: true,
+    });
+    const blob = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${content.sha}`,
+      json: true,
+    });
+    assert.equal(content.sha, blob.sha);
     await server.stop();
   });
 });
