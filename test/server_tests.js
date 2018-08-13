@@ -22,6 +22,7 @@ const shell = require('shelljs');
 const fse = require('fs-extra');
 const tcpPortUsed = require('tcp-port-used');
 const rp = require('request-promise-native');
+const tmp = require('tmp');
 
 const server = require('../lib/server.js');
 
@@ -35,6 +36,7 @@ if (!shell.which('git')) {
 
 // TODO: use replay ?
 async function assertHttp(url, status, spec) {
+  // TODO: use rp
   const client = url.protocol === 'https:' ? https : http;
   return new Promise((resolve, reject) => {
     let data = '';
@@ -515,5 +517,33 @@ describe('Server Test', () => {
     });
     assert.equal(content.sha, blob.sha);
     await server.stop();
+  });
+
+  it('git clone (Git Smart Transfer Protocol)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: TEST_DIR_DEFAULT,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    return new Promise((resolve, reject) => {
+      tmp.dir((err, tmpDir) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        shell.exec(`git clone http://localhost:${state.httpPort}/owner1/repo1.git`,
+          { cwd: tmpDir, silent: true },
+          async (code) => {
+            await server.stop();
+            await fse.remove(tmpDir);
+            assert(!code);
+            resolve();
+          });
+      });
+    });
   });
 });
