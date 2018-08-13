@@ -14,9 +14,6 @@
 
 const assert = require('assert');
 const path = require('path');
-const http = require('http');
-const https = require('https');
-const { URL } = require('url');
 
 const shell = require('shelljs');
 const fse = require('fs-extra');
@@ -35,44 +32,19 @@ if (!shell.which('git')) {
 }
 
 // TODO: use replay ?
-async function assertHttp(url, status, spec) {
-  // TODO: use rp
-  const client = url.protocol === 'https:' ? https : http;
-  return new Promise((resolve, reject) => {
-    let data = '';
-    const options = {
-      hostname: url.hostname,
-      port: url.port,
-      path: url.pathname,
-      rejectUnauthorized: false,
-    };
-    client.get(options, (res) => {
-      try {
-        assert.equal(res.statusCode, status);
-      } catch (e) {
-        res.resume();
-        reject(e);
-      }
-
-      res
-        .on('data', (chunk) => {
-          data += chunk;
-        })
-        .on('end', () => {
-          try {
-            if (spec) {
-              const expected = fse.readFileSync(path.resolve(__dirname, 'specs', spec)).toString();
-              assert.equal(data, expected);
-            }
-            resolve();
-          } catch (e) {
-            reject(e);
-          }
-        });
-    }).on('error', (e) => {
-      reject(e);
-    });
+async function assertResponse(uri, status, spec) {
+  const resp = await rp({
+    uri,
+    resolveWithFullResponse: true,
+    simple: false,
+    rejectUnauthorized: false,
+    followRedirect: false,
   });
+  assert.equal(resp.statusCode, status);
+  if (spec) {
+    const expected = (await fse.readFile(path.resolve(__dirname, 'specs', spec))).toString();
+    assert.equal(resp.body, expected);
+  }
 }
 
 async function checkPort(port, inUse) {
@@ -114,7 +86,7 @@ describe('Server Test', () => {
     });
     assert.equal(state.httpPort, 5000);
     assert.equal(state.httpsPort, -1);
-    await assertHttp(new URL(`http://localhost:${state.httpPort}`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}`, 404);
     await server.stop();
     await checkPort(5000, false);
   });
@@ -131,7 +103,7 @@ describe('Server Test', () => {
     });
     assert.notEqual(state.httpPort, 5000);
     assert.equal(state.httpsPort, -1);
-    await assertHttp(new URL(`http://localhost:${state.httpPort}`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}`, 404);
     await server.stop();
     await checkPort(state.httpPort, false);
   });
@@ -149,7 +121,7 @@ describe('Server Test', () => {
     });
     assert.equal(state.httpPort, 5000);
     assert.equal(state.httpsPort, 5443);
-    await assertHttp(new URL(`https://localhost:${state.httpsPort}`), 404);
+    await assertResponse(`https://localhost:${state.httpsPort}`, 404);
     await server.stop();
     await checkPort(5000, false);
     await checkPort(5443, false);
@@ -171,7 +143,7 @@ describe('Server Test', () => {
     assert.notEqual(state.httpPort, 5000);
     assert.notEqual(state.httpsPort, -1);
     assert.notEqual(state.httpsPort, 5443);
-    await assertHttp(new URL(`https://localhost:${state.httpsPort}`), 404);
+    await assertResponse(`https://localhost:${state.httpsPort}`, 404);
     await server.stop();
     await checkPort(state.httpPort, false);
     await checkPort(state.httpsPort, false);
@@ -187,7 +159,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`), 200, 'expected_readme.md');
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`, 200, 'expected_readme.md');
     await server.stop();
   });
 
@@ -201,7 +173,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/notexist.md`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/notexist.md`, 404);
     await server.stop();
   });
 
@@ -215,7 +187,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/repo1/blaster/README.md`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/blaster/README.md`, 404);
     await server.stop();
   });
 
@@ -229,7 +201,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/owner1/floppy/master/README.md`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/floppy/master/README.md`, 404);
     await server.stop();
   });
 
@@ -243,7 +215,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/raw/noowner/repo1/master/README.md`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/noowner/repo1/master/README.md`, 404);
     await server.stop();
   });
 
@@ -257,7 +229,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/zipball/master`), 302);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/zipball/master`, 302);
     await server.stop();
   });
 
@@ -271,7 +243,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/tarball/master`), 302);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/tarball/master`, 302);
     await server.stop();
   });
 
@@ -285,7 +257,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.zip`), 302);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.zip`, 302);
     await server.stop();
   });
 
@@ -299,7 +271,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.tar.gz`), 302);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.tar.gz`, 302);
     await server.stop();
   });
 
@@ -313,7 +285,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.zip/master`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.zip/master`, 200);
     await server.stop();
   });
 
@@ -327,7 +299,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/master`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/master`, 200);
     await server.stop();
   });
 
@@ -341,7 +313,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.tar.gz/master`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.tar.gz/master`, 200);
     await server.stop();
   });
 
@@ -355,7 +327,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/codeload/owner1/repo1/tar.gz/master`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/tar.gz/master`, 200);
     await server.stop();
   });
 
@@ -375,7 +347,7 @@ describe('Server Test', () => {
         ],
       },
     });
-    await assertHttp(new URL(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`), 200);
+    await assertResponse(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`, 200);
     await server.stop();
   });
 
@@ -395,7 +367,7 @@ describe('Server Test', () => {
         ],
       },
     });
-    await assertHttp(new URL(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`), 200);
+    await assertResponse(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`, 200);
     await server.stop();
   });
 
@@ -409,7 +381,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=master`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=master`, 200);
     await server.stop();
   });
 
@@ -423,7 +395,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`, 200);
     await server.stop();
   });
 
@@ -437,7 +409,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README.md`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README.md`, 200);
     await server.stop();
   });
 
@@ -451,7 +423,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README99.md`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README99.md`, 404);
     await server.stop();
   });
 
@@ -465,7 +437,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/`, 200);
     await server.stop();
   });
 
@@ -479,7 +451,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/blahblah`), 404);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/blahblah`, 404);
     await server.stop();
   });
 
@@ -493,7 +465,7 @@ describe('Server Test', () => {
         },
       },
     });
-    await assertHttp(new URL(`http://localhost:${state.httpPort}/owner1/repo1`), 200);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1`, 200);
     await server.stop();
   });
 
