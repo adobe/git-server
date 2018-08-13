@@ -39,6 +39,7 @@
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.10.0",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.17.0",
     "npm-snapshot": "^1.0.3",
