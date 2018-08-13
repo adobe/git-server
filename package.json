@@ -22,7 +22,7 @@
     "express": "^4.16.3",
     "fs-extra": "^7.0.0",
     "git-http-backend": "^1.0.2",
-    "ignore": "^4.0.3",
+    "ignore": "^5.0.0",
     "klaw": "^3.0.0",
     "lodash": "^4.17.10",
     "mime": "^2.3.1",
