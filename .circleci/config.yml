@@ -100,7 +100,7 @@ jobs:
 
       - run: 
           name: Publish Snapshot
-          command: npm publish --access public
+          command: npm publish --access public --tag next
 
       - store_test_results:
           path: junit
