@@ -14,6 +14,7 @@
 
 const assert = require('assert');
 const path = require('path');
+const { promisify } = require('util');
 
 const shell = require('shelljs');
 const fse = require('fs-extra');
@@ -24,12 +25,13 @@ const tmp = require('tmp');
 const server = require('../lib/server.js');
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
-const TEST_REPO_1 = path.resolve(TEST_DIR_DEFAULT, 'owner1/repo1');
 
 if (!shell.which('git')) {
   shell.echo('Sorry, this tests requires git');
   shell.exit(1);
 }
+
+const mkTmpDir = promisify(tmp.dir);
 
 // TODO: use replay ?
 async function assertResponse(uri, status, spec) {
@@ -57,20 +59,27 @@ function initRepository(dir) {
   shell.exec('git init');
   shell.exec('git add -A');
   shell.exec('git commit -m"initial commit."');
+  shell.exec('git checkout -b new_branch');
+  shell.touch('new_file.txt');
+  shell.exec('git add .');
+  shell.exec('git commit -m "new_branch commit"');
+  shell.exec('git checkout master');
   shell.cd(pwd);
 }
 
-function removeRepository(dir) {
-  shell.rm('-rf', path.resolve(dir, '.git'));
-}
+let testRepoRoot;
 
 describe('Server Test', () => {
-  before(() => {
-    initRepository(TEST_REPO_1);
+  before(async () => {
+    // copy default repos to tmp dir and setup git repos
+    testRepoRoot = await mkTmpDir();
+    await fse.copy(TEST_DIR_DEFAULT, testRepoRoot);
+    initRepository(path.resolve(testRepoRoot, 'owner1/repo1'));
   });
 
-  after(() => {
-    removeRepository(TEST_REPO_1);
+  after(async () => {
+    // cleanup: remove tmp repo root
+    await fse.remove(testRepoRoot);
   });
 
   afterEach(async () => {
@@ -82,7 +91,7 @@ describe('Server Test', () => {
 
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
     });
     assert.equal(state.httpPort, 5000);
     assert.equal(state.httpsPort, -1);
@@ -94,7 +103,7 @@ describe('Server Test', () => {
   it('Starts http server on random port', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -114,7 +123,7 @@ describe('Server Test', () => {
 
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         https: {},
       },
@@ -130,7 +139,7 @@ describe('Server Test', () => {
   it('Starts https server on random port', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -152,7 +161,7 @@ describe('Server Test', () => {
   it('Delivers raw content.', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -166,7 +175,7 @@ describe('Server Test', () => {
   it('Delivers 404 for raw content that does not exist.', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -180,7 +189,7 @@ describe('Server Test', () => {
   it('Delivers 404 for raw content for non-existing branch', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -194,7 +203,7 @@ describe('Server Test', () => {
   it('Delivers 404 for raw content for non-existing repo', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -208,7 +217,7 @@ describe('Server Test', () => {
   it('Delivers 404 for raw content for non-existing owner', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -222,7 +231,7 @@ describe('Server Test', () => {
   it('Delivers 302 for GitHub API get-archive-link (zip)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -236,7 +245,7 @@ describe('Server Test', () => {
   it('Delivers 302 for GitHub API get-archive-link (tar.gz)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -250,7 +259,7 @@ describe('Server Test', () => {
   it('Delivers 302 for GitHub archive request (zip)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -264,7 +273,7 @@ describe('Server Test', () => {
   it('Delivers 302 for GitHub archive request (tar.gz)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -278,7 +287,7 @@ describe('Server Test', () => {
   it('Delivers 200 for GitHub codeload request (zip)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -292,7 +301,7 @@ describe('Server Test', () => {
   it('Delivers 200 for GitHub codeload request (zip)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -303,10 +312,24 @@ describe('Server Test', () => {
     await server.stop();
   });
 
+  it('Delivers 200 for GitHub codeload request (zip, non-master branch)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.zip/new_branch`, 200);
+    await server.stop();
+  });
+
   it('Delivers 200 for GitHub codeload request (tar.gz)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -320,7 +343,7 @@ describe('Server Test', () => {
   it('Delivers 200 for GitHub codeload request (tar.gz)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -334,7 +357,7 @@ describe('Server Test', () => {
   it('Tests codeload subdomain mapping', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -354,7 +377,7 @@ describe('Server Test', () => {
   it('Tests codeload subdomain mapping', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -374,7 +397,7 @@ describe('Server Test', () => {
   it('Delivers 200 for GitHub API list-commits', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -385,10 +408,24 @@ describe('Server Test', () => {
     await server.stop();
   });
 
+  it('Delivers 200 for GitHub API list-commits', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?path=README.md`, 200);
+    await server.stop();
+  });
+
   it('Delivers 200 for GitHub API get-contents', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -402,7 +439,7 @@ describe('Server Test', () => {
   it('Delivers 200 for GitHub blob view (existing resource)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -416,7 +453,7 @@ describe('Server Test', () => {
   it('Delivers 404 for GitHub blob view (nonexisting resource)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -430,7 +467,7 @@ describe('Server Test', () => {
   it('Delivers 200 for GitHub tree view (existing path)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -444,7 +481,7 @@ describe('Server Test', () => {
   it('Delivers 404 for GitHub tree view (nonexisting path)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -458,7 +495,7 @@ describe('Server Test', () => {
   it('Delivers 200 for GitHub root view', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -472,7 +509,7 @@ describe('Server Test', () => {
   it('GitHub API get-content and get-blob', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
@@ -494,28 +531,23 @@ describe('Server Test', () => {
   it('git clone (Git Smart Transfer Protocol)', async () => {
     const state = await server.start({
       configPath: '<internal>',
-      repoRoot: TEST_DIR_DEFAULT,
+      repoRoot: testRepoRoot,
       listen: {
         http: {
           port: 0,
         },
       },
     });
-    return new Promise((resolve, reject) => {
-      tmp.dir((err, tmpDir) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        shell.exec(`git clone http://localhost:${state.httpPort}/owner1/repo1.git`,
-          { cwd: tmpDir, silent: true },
-          async (code) => {
-            await server.stop();
-            await fse.remove(tmpDir);
-            assert(!code);
-            resolve();
-          });
-      });
+    const tmpDir = await mkTmpDir();
+    return new Promise((resolve) => {
+      shell.exec(`git clone http://localhost:${state.httpPort}/owner1/repo1.git`,
+        { cwd: tmpDir, silent: true },
+        async (code) => {
+          await server.stop();
+          await fse.remove(tmpDir);
+          assert(!code);
+          resolve();
+        });
     });
   });
 });
