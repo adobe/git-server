@@ -48,7 +48,7 @@
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "shelljs": "^0.8.2",
-    "tcp-port-used": "^0.1.2",
+    "tcp-port-used": "^1.0.0",
     "tmp": "0.0.33"
   },
   "snyk": true
