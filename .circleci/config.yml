@@ -57,56 +57,56 @@ jobs:
       - store_artifacts:
           path: junit
 
-    publish-pre-release:
-      docker:
-      # specify the version you desire here
-      - image: circleci/node:8
+  publish-pre-release:
+    docker:
+    # specify the version you desire here
+    - image: circleci/node:8
 
-      working_directory: ~/repo
+    working_directory: ~/repo
 
-      steps:
-      - checkout
+    steps:
+    - checkout
 
-      - restore_cache:
-          keys:
-          - v2-dependencies-{{ checksum "package-lock.json" }}
+    - restore_cache:
+        keys:
+        - v2-dependencies-{{ checksum "package-lock.json" }}
 
-      - add_ssh_keys:
-          fingerprints:
-          - "1c:ed:c4:8b:22:ae:35:e7:00:36:9a:6a:f7:5c:3e:6b"
+    - add_ssh_keys:
+        fingerprints:
+        - "1c:ed:c4:8b:22:ae:35:e7:00:36:9a:6a:f7:5c:3e:6b"
 
-      - run:
-          name: prepare test git user
-          command: git config --global user.email "circleci@example.com" && git config --global user.name "CircleCi Build"
+    - run:
+        name: prepare test git user
+        command: git config --global user.email "circleci@example.com" && git config --global user.name "CircleCi Build"
 
-      - run:
-          name: install npm 6.4.0
-          command: sudo npm -g install npm@6.4.0
+    - run:
+        name: install npm 6.4.0
+        command: sudo npm -g install npm@6.4.0
 
-      - run:
-          name: install
-          command: npm install
+    - run:
+        name: install
+        command: npm install
 
-      - run:
-          name: revert changes to package-lock.json
-          command: git checkout -- package-lock.json
+    - run:
+        name: revert changes to package-lock.json
+        command: git checkout -- package-lock.json
 
-      - run:
-          name: configure npm registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+    - run:
+        name: configure npm registry
+        command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
-      - run:
-          name: version pre-release
-          command: npm version prerelease --preid=pre -m "Release %s [ci skip]"
+    - run:
+        name: version pre-release
+        command: npm version prerelease --preid=pre -m "Release %s [ci skip]"
 
-      # unfortunately we cannot create a release commit with no tag with `npm version`, so we need to delete it here again
-      - run:
-          name: delete pre-release tag
-          command: npm run delete-git-tag
+    # unfortunately we cannot create a release commit with no tag with `npm version`, so we need to delete it here again
+    - run:
+        name: delete pre-release tag
+        command: npm run delete-git-tag
 
-      - run:
-          name: publish pre-release
-          command: npm publish --tag next --access public
+    - run:
+        name: publish pre-release
+        command: npm publish --tag next --access public
 
 workflows:
   version: 2
