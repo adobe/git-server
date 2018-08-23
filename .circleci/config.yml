@@ -2,36 +2,32 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:8
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
     working_directory: ~/repo
 
     steps:
       - checkout
 
-
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - v2-dependencies-{{ checksum "package-lock.json" }}
 
-      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: install npm 6.4.0
+          command: sudo npm -g install npm@6.4.0
 
-      - run: 
+      - run:
+          name: Installing Dependencies
           command: npm install
 
       - save_cache:
           paths:
             - git-server/node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ checksum "package-lock.json" }}
 
-      - run: 
+      - run:
+          name: Lint
           command: npx eslint lib/*.js lib/**/*.js
 
       # run tests!
@@ -57,65 +53,72 @@ jobs:
 
       - store_test_results:
           path: junit
+
       - store_artifacts:
           path: junit
 
-  publish-snapshot:
-    docker:
+    publish-pre-release:
+      docker:
       # specify the version you desire here
       - image: circleci/node:8
 
-    working_directory: ~/repo
+      working_directory: ~/repo
 
-    steps:
+      steps:
       - checkout
 
-      # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+          - v2-dependencies-{{ checksum "package-lock.json" }}
 
-      - run: 
-          name: Install Dependencies
+      - add_ssh_keys:
+          fingerprints:
+          - "1c:ed:c4:8b:22:ae:35:e7:00:36:9a:6a:f7:5c:3e:6b"
+
+      - run:
+          name: prepare test git user
+          command: git config --global user.email "circleci@example.com" && git config --global user.name "CircleCi Build"
+
+      - run:
+          name: install npm 6.4.0
+          command: sudo npm -g install npm@6.4.0
+
+      - run:
+          name: install
           command: npm install
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: revert changes to package-lock.json
+          command: git checkout -- package-lock.json
 
-#      # run tests!
-#      - run: mkdir junit
-#      - run:
-#          name: Running Tests
-#          command: ./node_modules/.bin/mocha test --reporter mocha-junit-reporter
-#          environment:
-#            MOCHA_FILE: junit/test-results.xml
-#          when: always
+      - run:
+          name: configure npm registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
-      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: version pre-release
+          command: npm version prerelease --preid=pre -m "Release %s [ci skip]"
 
-      - run: 
-          command: BUILD_TAG=$(./node_modules/.bin/npm-snapshot $CIRCLE_BUILD_NUM) echo 'export BUILD_TAG=$BUILD_TAG' >> $BASH_ENV
+      # unfortunately we cannot create a release commit with no tag with `npm version`, so we need to delete it here again
+      - run:
+          name: delete pre-release tag
+          command: npm run delete-git-tag
 
-      - run: 
-          name: Publish Snapshot
-          command: npm publish --access public --tag next
-
-      - store_test_results:
-          path: junit
-      - store_artifacts:
-          path: junit 
+      - run:
+          name: publish pre-release
+          command: npm publish --tag next --access public
 
 workflows:
   version: 2
   build:
     jobs:
-      - publish-snapshot:
-           requires:
-               - build
-           filters:
-              branches:
-                only:
-                  - master
-      - build
+    # run build on any branch
+    - build
+
+    # publish pre-releases on master
+    - publish-pre-release:
+        requires:
+        - build
+        filters:
+          branches:
+            only: master
