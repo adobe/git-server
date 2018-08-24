@@ -67,9 +67,11 @@ async function initRepository(dir) {
   shell.cd(pwd);
 }
 
-let testRepoRoot;
-//  const dir = path.resolve(__dirname, 'tmp', uuidv4());
-describe('Server Test', () => {
+describe('Server Test', function suite() {
+  this.timeout(10000);
+
+  let testRepoRoot;
+
   before(async () => {
     // copy default repos to tmp dir and setup git repos
     testRepoRoot = await mkTmpDir();
@@ -550,4 +552,4 @@ describe('Server Test', () => {
         });
     });
   });
-}).timeout(10000);
+});
