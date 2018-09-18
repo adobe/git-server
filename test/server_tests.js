@@ -53,7 +53,7 @@ async function checkPort(port, inUse) {
   assert.equal(await tcpPortUsed.check(port, '127.0.0.1'), inUse, `port ${port} should ${inUse ? '' : 'not '}be in use.`);
 }
 
-function initRepository(dir) {
+async function initRepository(dir) {
   const pwd = shell.pwd();
   shell.cd(dir);
   shell.exec('git init');
@@ -67,14 +67,16 @@ function initRepository(dir) {
   shell.cd(pwd);
 }
 
-let testRepoRoot;
+describe('Server Test', function suite() {
+  this.timeout(10000);
 
-describe('Server Test', () => {
+  let testRepoRoot;
+
   before(async () => {
     // copy default repos to tmp dir and setup git repos
     testRepoRoot = await mkTmpDir();
     await fse.copy(TEST_DIR_DEFAULT, testRepoRoot);
-    initRepository(path.resolve(testRepoRoot, 'owner1/repo1'));
+    await initRepository(path.resolve(testRepoRoot, 'owner1/repo1'));
   });
 
   after(async () => {

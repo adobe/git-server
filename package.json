@@ -1,6 +1,6 @@
 {
   "name": "@adobe/git-server",
-  "version": "0.9.1",
+  "version": "0.9.2-pre.2",
   "description": "serve a git repository over http(s)",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,10 @@
     "test": "nyc mocha --timeout 5000",
     "lint": "./node_modules/.bin/eslint .",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "preversion": "npm test",
+    "postversion": "git push origin master --follow-tags",
+    "delete-git-tag": "git tag -d v$npm_package_version && git push origin :v$npm_package_version"
   },
   "repository": {
     "type": "git",
@@ -16,7 +19,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "archiver": "^2.1.1",
+    "archiver": "^3.0.0",
     "async": "^2.6.1",
     "escape-html": "^1.0.3",
     "express": "^4.16.3",
@@ -36,7 +39,7 @@
     "codecov": "^3.1.0",
     "eslint": "^5.6.0",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-header": "^1.2.0",
+    "eslint-plugin-header": "^2.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.1",
@@ -44,11 +47,11 @@
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.18.0",
     "npm-snapshot": "^1.0.3",
-    "nyc": "^12.0.2",
+    "nyc": "^13.0.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "shelljs": "^0.8.2",
-    "tcp-port-used": "^0.1.2",
+    "tcp-port-used": "^1.0.0",
     "tmp": "0.0.33"
   },
   "snyk": true
