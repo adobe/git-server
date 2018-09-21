@@ -57,8 +57,6 @@ The following protocols and APIs are currently supported:
 
 `git-server` includes the [nodegit](https://github.com/nodegit/nodegit) dependency, a native addon which will be built from source on `npm install`. A proper C/C++ compiler toolchain (`gcc` etc)  is therefore required. See the platorm specific information below to install/enable the compiler toolchain (if not done so already).
 
-Right now, `nodegit` and with it `git-server` does not run on Node 10 and needs Node 8.
-
 #### macOS
 
 Run the following commands in a shell:
