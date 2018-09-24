@@ -19,6 +19,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@adobe/nodegit": "^0.22.2-fork.1",
     "archiver": "^3.0.0",
     "async": "^2.6.1",
     "escape-html": "^1.0.3",
@@ -30,7 +31,6 @@
     "lodash": "^4.17.11",
     "mime": "^2.3.1",
     "morgan": "^1.9.1",
-    "@adobe/nodegit": "^0.22.2-fork.0",
     "pem": "^1.13.1",
     "snyk": "^1.95.3",
     "winston": "^3.1.0"
