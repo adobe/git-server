@@ -552,4 +552,25 @@ describe('Server Test', function suite() {
         });
     });
   });
+
+  it('repository info', async () => {
+    const cfg = {
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    };
+    await server.start(cfg);
+    assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'master');
+    const pwd = shell.pwd();
+    shell.cd(path.resolve(testRepoRoot, 'owner1/repo1'));
+    shell.exec('git checkout new_branch');
+    assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'new_branch');
+    shell.exec('git checkout master');
+    shell.cd(pwd);
+    await server.stop();
+  });
 });
