@@ -24,7 +24,7 @@
 │   └── <repo_2>
 ```
 
-Alternatively, a virtual repository mapping allows to 'mount' repositories independant of their location in the file system into a `<owner>/<repo>` hierarchy. A configuration example:
+Alternatively, a virtual repository mapping allows to 'mount' repositories independent of their location in the file system into a `<owner>/<repo>` hierarchy. A configuration example:
 
 ```js
   virtualRepos: {
@@ -187,7 +187,7 @@ Only a small subset of the GitHub API will be supported:
 
 * [Get archive link](https://developer.github.com/v3/repos/contents/#get-archive-link)
 
-  _Note:_  This method returns a `302` to a URL to download a tarball or zipball archive for a repository. `git-server` also supports an inofficial `https://codeload.github.com` endpoint that is not rate limited and that doesn't redirect:
+  _Note:_  This method returns a `302` to a URL to download a tarball or zipball archive for a repository. `git-server` also supports an unofficial `https://codeload.github.com` endpoint that is not rate limited and that doesn't redirect:
 
   * `https://codeload.github.com/{owner}/{repo}/[zip|tar.gz]/master`
 
