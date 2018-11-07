@@ -424,7 +424,7 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
-  it('Delivers 200 for GitHub API get-contents', async () => {
+  it('Delivers 200 for GitHub API get-contents (file)', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
@@ -435,6 +435,44 @@ describe('Server Test', function suite() {
       },
     });
     await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`, 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API get-contents (dir)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=master`, 200);
+    await server.stop();
+  });
+
+  it('GitHub API get-content (dir) and get-blob', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    const entries = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=master`,
+      json: true,
+    });
+    assert.strictEqual(entries.length, 1);
+    assert.strictEqual(entries[0].name, 'README.md');
+    const blob = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${entries[0].sha}`,
+      json: true,
+    });
+    assert.strictEqual(entries[0].sha, blob.sha);
     await server.stop();
   });
 
