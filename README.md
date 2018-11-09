@@ -183,6 +183,8 @@ Only a small subset of the GitHub API will be supported:
 
   _Note:_ The GitHub implementation supports blobs up to 100 megabytes in size.
 
+* [Get tree](https://developer.github.com/v3/git/trees/#get-a-tree-recursively)
+
 * [Get commits](https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository)
 
 * [Get archive link](https://developer.github.com/v3/repos/contents/#get-archive-link)

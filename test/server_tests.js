@@ -57,6 +57,9 @@ async function initRepository(dir) {
   const pwd = shell.pwd();
   shell.cd(dir);
   shell.exec('git init');
+  shell.exec('mkdir sub');
+  shell.exec('mkdir sub/sub');
+  shell.touch('sub/sub/some_file.txt');
   shell.exec('git add -A');
   shell.exec('git commit -m"initial commit."');
   shell.exec('git checkout -b new_branch');
@@ -466,13 +469,42 @@ describe('Server Test', function suite() {
       uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=master`,
       json: true,
     });
-    assert.strictEqual(entries.length, 1);
-    assert.strictEqual(entries[0].name, 'README.md');
+    assert.strictEqual(entries.length, 2);
+    assert.strictEqual(entries.filter(entry => entry.name === 'README.md' && entry.type === 'file').length, 1);
+    assert.strictEqual(entries.filter(entry => entry.name === 'sub' && entry.type === 'dir').length, 1);
+    const fileEntry = entries.filter(entry => entry.name === 'README.md' && entry.type === 'file')[0];
     const blob = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${entries[0].sha}`,
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${fileEntry.sha}`,
       json: true,
     });
-    assert.strictEqual(entries[0].sha, blob.sha);
+    assert.strictEqual(fileEntry.sha, blob.sha);
+    await server.stop();
+  });
+
+  it('GitHub API get-tree', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    let resp = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/master`,
+      json: true,
+    });
+    assert.strictEqual(resp.tree.length, 2);
+    assert.strictEqual(resp.tree.filter(entry => entry.type === 'tree').length, 1);
+    assert.strictEqual(resp.tree.filter(entry => entry.type === 'blob').length, 1);
+    resp = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/master?recursive=1`,
+      json: true,
+    });
+    assert.strictEqual(resp.tree.length, 4);
+    assert.strictEqual(resp.tree.filter(entry => entry.type === 'tree').length, 2);
+    assert.strictEqual(resp.tree.filter(entry => entry.type === 'blob').length, 2);
     await server.stop();
   });
 
