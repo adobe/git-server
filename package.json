@@ -19,7 +19,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "nodegit": "^0.22.2",
+    "nodegit": "^0.23.0",
     "archiver": "^3.0.0",
     "async": "^2.6.1",
     "escape-html": "^1.0.3",
