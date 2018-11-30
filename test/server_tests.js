@@ -623,6 +623,36 @@ describe('Server Test', function suite() {
     });
   });
 
+  it('git clone (Git Smart Transfer Protocol) virtual repo', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      virtualRepos: {
+        org: {
+          repo: {
+            path: path.resolve(testRepoRoot, 'owner1/repo1'),
+          },
+        },
+      },
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    const tmpDir = await mkTmpDir();
+    return new Promise((resolve) => {
+      shell.exec(`git clone http://localhost:${state.httpPort}/org/repo.git`,
+        { cwd: tmpDir, silent: true },
+        async (code) => {
+          await server.stop();
+          await fse.remove(tmpDir);
+          assert(!code);
+          resolve();
+        });
+    });
+  });
+
   it('repository info', async () => {
     const cfg = {
       configPath: '<internal>',
