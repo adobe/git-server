@@ -75,7 +75,71 @@ npm install
 
 ## Getting started
 
-`git-server` is configured via the `config.js` file which is expected to exist in the current working directory.
+`git-server` is configured via the `config.js` file which is expected to exist in the current working directory. Here's the default configuration:
+
+```javascript
+{
+  appTitle: 'Helix Git Server',
+  repoRoot: './repos',
+  // repository mapping. allows to 'mount' repositories outside the 'repoRoot' structure.
+  virtualRepos: {
+    demoOwner: {
+      demoRepo: {
+        path: './virtual/example',
+      },
+    },
+  },
+  listen: {
+    http: {
+      port: 5000,
+      host: '0.0.0.0',
+    },
+    /*
+    // https is optional
+    https: {
+      // cert: if no file is specfied a selfsigned certificate will be generated on-the-fly
+      // cert: './localhost.crt',
+      // key: if no file is specfied a key will be generated on-the-fly
+      // key: './localhost.key',
+      port: 5443,
+      host: '0.0.0.0',
+    },
+    */
+  },
+  subdomainMapping: {
+    // if enabled, <subdomain>.<baseDomain>/foo/bar/baz will be
+    // resolved/mapped to 127.0.0.1/<subdomain>/foo/bar/baz
+    enable: true,
+    baseDomains: [
+      // some wildcarded DNS domains resolving to 127.0.0.1
+      'localtest.me',
+      'lvh.me',
+      'vcap.me',
+      'lacolhost.com',
+    ],
+  },
+  logs: {
+    level: 'info', // error, warn, info, verbose, debug, silly
+    logsDir: './logs',
+    reqLogFormat: 'short', // used for morgan (request logging)
+  },
+}
+```
+
+`git-server` comes with a built-in winston logger. The log level (`error`, `warn`, `info`, `verbose`, `debug`, `silly`) can be set via the `logs.level` property in the config (see above).
+
+Alternatively you can pass your own wiston logger instance:
+
+```javascript
+// git server
+const gitServer = require('@adobe/git-server/lib/server.js');
+// git server config
+const config = require('./config.js');
+// inject winston logger instance
+config.logger = require('winston').createLogger({ /* ... */ });
+
+gitServer.start(config);
+```
 
 ### 1. Create a local Git repository
 
