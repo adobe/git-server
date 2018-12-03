@@ -128,7 +128,7 @@ npm install
 
 `git-server` comes with a built-in winston logger. The log level (`error`, `warn`, `info`, `verbose`, `debug`, `silly`) can be set via the `logs.level` property in the config (see above).
 
-Alternatively you can pass your own wiston logger instance:
+Alternatively you can pass your own winston logger instance:
 
 ```javascript
 // git server
