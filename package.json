@@ -1,6 +1,6 @@
 {
   "name": "@adobe/git-server",
-  "version": "0.9.11-pre.4",
+  "version": "0.9.11-pre.5",
   "description": "serve a git repository over http(s)",
   "main": "index.js",
   "scripts": {
