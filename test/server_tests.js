@@ -66,6 +66,10 @@ async function initRepository(dir) {
   shell.touch('new_file.txt');
   shell.exec('git add .');
   shell.exec('git commit -m "new_branch commit"');
+  shell.exec('git checkout -b branch/with_slash');
+  shell.touch('another_new_file.txt');
+  shell.exec('git add .');
+  shell.exec('git commit -m "new_branch commit"');
   shell.exec('git checkout master');
   shell.cd(pwd);
 }
@@ -174,6 +178,34 @@ describe('Server Test', function suite() {
       },
     });
     await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`, 200, 'expected_readme.md');
+    await server.stop();
+  });
+
+  it('Delivers raw content on branch.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/new_branch/README.md`, 200, 'expected_readme.md');
+    await server.stop();
+  });
+
+  it('Delivers raw content on branch with slash.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/branch/with_slash/README.md`, 200, 'expected_readme.md');
     await server.stop();
   });
 
@@ -331,6 +363,20 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
+  it('Delivers 200 for GitHub codeload request (zip, non-master branch with slash)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.zip/branch/with_slash`, 200);
+    await server.stop();
+  });
+
   it('Delivers 200 for GitHub codeload request (tar.gz)', async () => {
     const state = await server.start({
       configPath: '<internal>',
@@ -438,6 +484,34 @@ describe('Server Test', function suite() {
       },
     });
     await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`, 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API get-contents in branch (file)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/new_file.txt?ref=new_branch`, 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API get-contents in branch with slash (file)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/new_file.txt?ref=branch/with_slash`, 200);
     await server.stop();
   });
 
@@ -669,6 +743,8 @@ describe('Server Test', function suite() {
     shell.cd(path.resolve(testRepoRoot, 'owner1/repo1'));
     shell.exec('git checkout new_branch');
     assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'new_branch');
+    shell.exec('git checkout branch/with_slash');
+    assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'branch/with_slash');
     shell.exec('git checkout master');
     shell.cd(pwd);
     await server.stop();
