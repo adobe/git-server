@@ -62,14 +62,26 @@ async function initRepository(dir) {
   shell.touch('sub/sub/some_file.txt');
   shell.exec('git add -A');
   shell.exec('git commit -m"initial commit."');
+
+  // setup 'new_branch'
   shell.exec('git checkout -b new_branch');
   shell.touch('new_file.txt');
   shell.exec('git add .');
   shell.exec('git commit -m "new_branch commit"');
+
+  // setup 'branch/with_slash'
   shell.exec('git checkout -b branch/with_slash');
   shell.touch('another_new_file.txt');
   shell.exec('git add .');
   shell.exec('git commit -m "new_branch commit"');
+
+  // setup 'config' branch
+  shell.exec('git checkout master');
+  shell.exec('git checkout -b config');
+  shell.touch('config_file.txt');
+  shell.exec('git add .');
+  shell.exec('git commit -m "new_branch commit"');
+
   shell.exec('git checkout master');
   shell.cd(pwd);
 }
@@ -206,6 +218,20 @@ describe('Server Test', function suite() {
       },
     });
     await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/branch/with_slash/README.md`, 200, 'expected_readme.md');
+    await server.stop();
+  });
+
+  it('Delivers raw content on branch with name "config".', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/config/README.md`, 200, 'expected_readme.md');
     await server.stop();
   });
 
