@@ -53,8 +53,6 @@ The following protocols and APIs are currently supported:
 
 ## Installation
 
-Youy can install `git-server` using
-
 ```bash
 cd <checkout dir>
 npm install
