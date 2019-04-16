@@ -51,25 +51,12 @@ The following protocols and APIs are currently supported:
 * [Git HTTP Transfer Protocols](#2-git-http-transfer-protocols)
 * [GitHub API v3](#3-github-api-v3)
 
-## Build & Install
+## Installation
 
-### Prerequisite
-
-`git-server` includes the [nodegit](https://github.com/nodegit/nodegit) dependency, a native addon which will be built from source on `npm install`. A proper C/C++ compiler toolchain (`gcc` etc)  is therefore required. See the platorm specific information below to install/enable the compiler toolchain (if not done so already).
-
-#### macOS
-
-Run the following commands in a shell:
-```bash
-sudo xcode-select --install
-```
- [More information](https://github.com/nodejs/node-gyp#on-macos)
-
-### Installation
-
-Once you've made sure you meet above prerequisites you can build & install `git-server` using
+Youy can install `git-server` using
 
 ```bash
+cd <checkout dir>
 npm install
 ```
 
@@ -213,6 +200,7 @@ Local examples:
 Support for `git clone, push, fetch` 
 
 Documentation:
+
 * [10.6 Git Internals - Transfer Protocols](https://git-scm.com/book/en/v2/Git-Internals-Transfer-Protocols)
 * [Git HTTP transport protocol documentation](https://github.com/git/git/blob/master/Documentation/technical/http-protocol.txt)
 
