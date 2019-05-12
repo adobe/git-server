@@ -23,7 +23,7 @@
     "async": "^2.6.1",
     "escape-html": "^1.0.3",
     "express": "^4.16.3",
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^8.0.0",
     "git-http-backend": "^1.0.2",
     "ignore": "^5.0.2",
     "isomorphic-git": "^0.54.1",
