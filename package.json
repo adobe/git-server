@@ -32,7 +32,7 @@
     "mime": "^2.3.1",
     "morgan": "^1.9.1",
     "pem": "^1.13.1",
-    "snyk": "^1.143.1",
+    "snyk": "1.170.0",
     "winston": "^3.1.0"
   },
   "devDependencies": {
