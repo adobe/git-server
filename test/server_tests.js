@@ -224,7 +224,7 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
-  it('Delivers 404 raw content case insensitive.', async () => {
+  it.skip('Delivers 404 raw content case insensitive.', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
