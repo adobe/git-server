@@ -193,6 +193,37 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
+  it('Delivers raw non git content.', async () => {
+    const master = path.resolve(testRepoRoot, 'owner1', 'repo1');
+    await fse.copy(path.resolve(master, 'README.md'), path.resolve(master, 'new_file.md'));
+
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/new_file.md`, 200, 'expected_readme.md');
+    await server.stop();
+  });
+
+  it('Delivers 404 raw content case insensitive.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/readme.md`, 404);
+    await server.stop();
+  });
+
   it('Delivers raw content on branch.', async () => {
     const state = await server.start({
       configPath: '<internal>',
