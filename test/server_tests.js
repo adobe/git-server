@@ -210,7 +210,21 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
-  it('Delivers 404 raw content case insensitive.', async () => {
+  it('Delivers raw content with double slash.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/sub/sub//some_file.txt`, 200);
+    await server.stop();
+  });
+
+  it.skip('Delivers 404 raw content case insensitive.', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
