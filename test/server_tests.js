@@ -224,7 +224,7 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
-  it.skip('Delivers 404 raw content case insensitive.', async () => {
+  it('Delivers 404 raw content case insensitive.', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
@@ -234,7 +234,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/readme.md`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/rEaDmE.md`, 404);
     await server.stop();
   });
 
