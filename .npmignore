@@ -11,3 +11,4 @@ repos/*
 test
 tmp
 *.rest
+.DS_Store
