@@ -22,7 +22,7 @@ jobs:
       # test & get code coverage
       - run:
           name: Running Tests
-          command: npx mocha --reporter xunit --reporter-options mochaFile=junit/test-results.xml
+          command: ./node_modules/.bin/mocha --reporter xunit test --reporter-options output=junit/test.xml
           environment:
             MOCHA_FILE: junit/test-results.xml
           when: always
