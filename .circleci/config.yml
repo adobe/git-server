@@ -15,7 +15,7 @@ jobs:
           name: prepare test git user
           command: git config --global user.name "Your Name"
       - checkout
-      - run: choco install nodejs --version 10.16.0
+      - run: choco install nodejs --version 8.16.0
       - run: npm install
       - run: mkdir junit
 
