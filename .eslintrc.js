@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Adobe. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -20,8 +20,7 @@ module.exports = {
   'root': true,
   'parserOptions': {
     'sourceType': 'script',
-    // async/await support
-    'ecmaVersion': 8
+    'ecmaVersion': 10,
   },
   'plugins': [
     'header',
@@ -33,9 +32,9 @@ module.exports = {
     // allow dangling underscores for 'fields'
     'no-underscore-dangle': ['error', {'allowAfterThis': true}],
 
-    // enforce license header (todo: improve plugin to support patterns for multi-lines)
+    // enforce license header
     'header/header': [2, 'block', ['',
-      ' * Copyright 2018 Adobe. All rights reserved.',
+      { pattern: ' * Copyright \\d{4} Adobe\\. All rights reserved\\.', template: ' * Copyright 2019 Adobe. All rights reserved.'},
       ' * This file is licensed to you under the Apache License, Version 2.0 (the "License");',
       ' * you may not use this file except in compliance with the License. You may obtain a copy',
       ' * of the License at http://www.apache.org/licenses/LICENSE-2.0',
