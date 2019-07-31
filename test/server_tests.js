@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* global describe, before, after, afterEach, it */
+/* eslint-env mocha */
 
 const assert = require('assert');
 const path = require('path');
@@ -58,8 +58,8 @@ async function initRepository(dir) {
   shell.cd(dir);
   shell.exec('git init');
   shell.exec('mkdir sub');
-  shell.exec('mkdir sub/sub');
-  shell.touch('sub/sub/some_file.txt');
+  shell.exec(`mkdir ${path.join('sub', 'sub')}`);
+  shell.touch(path.join('sub', 'sub', 'some_file.txt'));
   shell.exec('git add -A');
   shell.exec('git commit -m"initial commit."');
 
@@ -87,7 +87,7 @@ async function initRepository(dir) {
 }
 
 describe('Server Test', function suite() {
-  this.timeout(10000);
+  this.timeout(30000);
 
   let testRepoRoot;
 
