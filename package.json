@@ -1,6 +1,6 @@
 {
   "name": "@adobe/git-server",
-  "version": "0.9.18-pre.30",
+  "version": "0.9.18-pre.31",
   "description": "serve a git repository over http(s)",
   "main": "index.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "codecov": "^3.1.0",
     "eslint": "^5.6.0",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-header": "^2.0.0",
+    "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.1",
