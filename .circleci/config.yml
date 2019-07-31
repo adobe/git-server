@@ -1,5 +1,38 @@
-version: 2
+version: 2.1
+orbs:
+  win: circleci/windows-tools@0.0.4
+
 jobs:
+  build_win:
+    parallelism: 1
+    executor: win/preview-default
+    steps:
+      - run: git config --global core.autocrlf false
+      - run:
+          name: prepare test git user
+          command: git config --global user.email "you@example.com"
+      - run:
+          name: prepare test git user
+          command: git config --global user.name "Your Name"
+      - checkout
+      - run: choco install nodejs --version 8.16.0
+      - run: npm install
+      - run: mkdir junit
+
+      # test & get code coverage
+      - run:
+          name: Running Tests
+          command: ./node_modules/.bin/mocha --reporter xunit test --reporter-options output=junit/test.xml
+          environment:
+            MOCHA_FILE: junit/test-results.xml
+          when: always
+
+      - store_test_results:
+          path: junit
+
+      - store_artifacts:
+          path: junit  
+
   build:
     docker:
       - image: circleci/node:8-jessie
@@ -113,11 +146,13 @@ workflows:
     jobs:
     # run build on any branch
     - build
+    - build_win
 
     # publish pre-releases on master
     - publish-pre-release:
         requires:
         - build
+        - build_win
         filters:
           branches:
             only: master
