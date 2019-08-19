@@ -87,7 +87,7 @@ async function initRepository(dir) {
 }
 
 describe('Server Test', function suite() {
-  this.timeout(30000);
+  this.timeout(60000);
 
   let testRepoRoot;
 
