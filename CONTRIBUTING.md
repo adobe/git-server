@@ -45,7 +45,7 @@ Each commit message that is not part of a pull request:
 
 ## Coding Styleguides
 
-There are no coding style guides... yet.
+This project uses the [airbnb](https://www.npmjs.com/package/eslint-config-airbnb-base) eslint rules. 
 
 
 ## Commit message format
