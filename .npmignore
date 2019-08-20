@@ -1,14 +1,5 @@
-.circleci
-.github
-.nyc_output
-.vscode
-.snyk
-.eslint*
+.*
 logs
-*.log
-*.tgz
 repos/*
 test
 tmp
-*.rest
-.DS_Store

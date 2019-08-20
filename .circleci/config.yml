@@ -2,157 +2,105 @@ version: 2.1
 orbs:
   win: circleci/windows-tools@0.0.4
 
+commands:
+  setup:
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v4-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: install npm 6.10.3
+          command: sudo npm -g install npm@6.10.3
+      - run:
+          name: Installing Dependencies
+          command: npm ci
+      - save_cache:
+          paths:
+            - node_modules
+          key: v4-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: prepare test git user
+          command: git config --global user.email "circleci@project-helix.io" && git config --global user.name "CircleCi Build"
+      - run: mkdir junit
+
 jobs:
   build_win:
     parallelism: 1
     executor: win/preview-default
     steps:
+      - run: choco install nodejs --version 8.16.0
       - run: git config --global core.autocrlf false
       - run:
           name: prepare test git user
-          command: git config --global user.email "you@example.com"
+          command: git config --global user.email "circleci@project-helix.io"
       - run:
           name: prepare test git user
-          command: git config --global user.name "Your Name"
+          command: git config --global user.name "CircleCi Build"
       - checkout
-      - run: choco install nodejs --version 8.16.0
-      - run: npm install
+      - run: npm ci
       - run: mkdir junit
-
-      # test & get code coverage
       - run:
-          name: Running Tests
-          command: ./node_modules/.bin/mocha --reporter xunit test --reporter-options output=junit/test.xml
+          name: Test and Code Coverage
+          command: npm run test-ci-win
           environment:
             MOCHA_FILE: junit/test-results.xml
-          when: always
-
       - store_test_results:
           path: junit
-
       - store_artifacts:
-          path: junit  
+          path: junit
 
   build:
+    parallelism: 1
     docker:
       - image: circleci/node:8-jessie
     working_directory: ~/repo
 
     steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v2-dependencies-{{ checksum "package-lock.json" }}
-
-      - run:
-          name: install npm 6.4.0
-          command: sudo npm -g install npm@6.4.0
-
-      - run:
-          name: Installing Dependencies
-          command: npm install
-
-      - save_cache:
-          paths:
-            - git-server/node_modules
-          key: v2-dependencies-{{ checksum "package-lock.json" }}
-
+      - setup
       - run:
           name: Lint
-          command: npx eslint lib/*.js lib/**/*.js
-
-      # run tests!
-      - run: mkdir junit
+          command: npm run lint
       - run:
-          name: prepare test git user
-          command: git config --global user.email "you@example.com" && git config --global user.name "Your Name"
-      - run:
-          name: Running Tests
-          command: npx mocha --reporter mocha-junit-reporter
+          name: Test and Code Coverage
+          command: npm run test-ci
           environment:
             MOCHA_FILE: junit/test-results.xml
-          when: always
-
-
-      # get code coverage
-      - run:
-          name: Getting Code Coverage
-          command: npx istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec && npx codecov
-          environment:
-            MOCHA_FILE: junit/test-results.xml
-          when: always
-
       - store_test_results:
           path: junit
-
       - store_artifacts:
           path: junit
 
-  publish-pre-release:
+  release:
+    parallelism: 1
     docker:
-    - image: circleci/node:8-jessie
-
+      - image: circleci/node:8-jessie
     working_directory: ~/repo
-
     steps:
-    - checkout
-
-    - restore_cache:
-        keys:
-        - v2-dependencies-{{ checksum "package-lock.json" }}
-
-    - add_ssh_keys:
-        fingerprints:
-        - "1c:ed:c4:8b:22:ae:35:e7:00:36:9a:6a:f7:5c:3e:6b"
-
-    - run:
-        name: prepare test git user
-        command: git config --global user.email "circleci@example.com" && git config --global user.name "CircleCi Build"
-
-    - run:
-        name: install npm 6.4.0
-        command: sudo npm -g install npm@6.4.0
-
-    - run:
-        name: install
-        command: npm install
-
-    - run:
-        name: revert changes to package-lock.json
-        command: git checkout -- package-lock.json
-
-    - run:
-        name: configure npm registry
-        command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-
-    - run:
-        name: version pre-release
-        command: npm version prerelease --preid=pre -m "Release %s [ci skip]"
-
-    # unfortunately we cannot create a release commit with no tag with `npm version`, so we need to delete it here again
-    - run:
-        name: delete pre-release tag
-        command: npm run delete-git-tag
-
-    - run:
-        name: publish pre-release
-        command: npm publish --tag next --access public
+      - setup
+      - run:
+          name: revert changes to package-lock.json
+          command: git checkout -- package-lock.json
+      - run:
+          name: configure npm registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: Semantic Release
+          command: npm run semantic-release
 
 workflows:
   version: 2
   build:
     jobs:
-    # run build on any branch
-    - build
-    - build_win
+      # run build on any branch
+      - build
+      - build_win
 
-    # publish pre-releases on master
-    - publish-pre-release:
-        requires:
-        - build
-        - build_win
-        filters:
-          branches:
-            only: master
+      # releases on master
+      - release:
+          requires:
+            - build
+            - build_win
+          filters:
+            branches:
+              only: master

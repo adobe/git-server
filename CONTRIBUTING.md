@@ -47,21 +47,23 @@ Each commit message that is not part of a pull request:
 
 There are no coding style guides... yet.
 
+
+## Commit message format
+
+We use [semantic-release](https://github.com/semantic-release/semantic-release) for release management and require that all commits are properly formatted using the [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
+
+In order to help you craft a good commit message, we added [commitizen](https://www.npmjs.com/package/commitizen) as dev dependency, so you can just run 
+
+```
+$ npm run commit
+```
+
+
 # How Contributions get Reviewed
 
-One of the maintainers will look at the pull request within one week. If you haven't heard back from the maintainers within a week, it is not impolite to send a reminder to [Grp-XDM-API-WGs](mailto:Grp-XDM-API-WGs@adobe.com).
-
+One of the maintainers will look at the pull request within one week.
 Feedback on the pull request will be given in writing, in GitHub.
 
 # Release Management
 
-The project's committers will release to the [Adobe organization on npmjs.org](https://www.npmjs.com/org/adobe).
-Please contact the [Adobe Open Source Advisory Board](https://git.corp.adobe.com/OpenSourceAdvisoryBoard/discuss/issues) to get access to the npmjs organization.
-Then, you can release using:
-
-```bash
-$ npm login
-$ npm publish --access public
-```
-
-Do not forget to add a `git tag` corresponding to the released version number
+Releasing is done using [semantic-release](https://github.com/semantic-release/semantic-release), and every (relevant) commit to the `master` branch gets released automatically. The release will update the version number and add the recent changes to the [CHANGELOG.md](./CHANGELOG.md). It will also create a [release](https://github.com/adobe/helix-cli/releases) in github and finally publish the package to the [Adobe organization on npmjs.org](https://www.npmjs.com/org/adobe).
