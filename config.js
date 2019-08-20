@@ -53,7 +53,7 @@ module.exports = {
     ],
   },
   logs: {
-    level: 'debug', // fatal, error, warn, info, verbose, debug, trace
+    level: 'info', // fatal, error, warn, info, verbose, debug, trace
     logsDir: './logs',
     reqLogFormat: 'short', // used for morgan (request logging)
   },
