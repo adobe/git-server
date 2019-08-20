@@ -1,6 +1,7 @@
 # git-server
 
 ## Status
+
 [![codecov](https://img.shields.io/codecov/c/github/adobe/git-server.svg)](https://codecov.io/gh/adobe/git-server)
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/git-server.svg)](https://circleci.com/gh/adobe/git-server)
 [![GitHub license](https://img.shields.io/github/license/adobe/git-server.svg)](https://github.com/adobe/git-server/blob/master/LICENSE.txt)
@@ -41,10 +42,9 @@ Alternatively, a virtual repository mapping allows to 'mount' repositories indep
   },
 ```
 
-Repositories exposed via `git-server` can be used just like any repository hosted on GitHub, 
-i.e. you can clone them and push changes to.
+Repositories exposed via `git-server` can be used just like any repository hosted on GitHub, i.e. you can clone them and push changes to.
 The repository contents can be accessed with the same url patterns you would use to request files managed on GitHub.
- 
+
 The following protocols and APIs are currently supported:
 
 * [Git Raw protocol](#1-git-raw-protocol)
@@ -104,27 +104,14 @@ npm install
     ],
   },
   logs: {
-    level: 'info', // error, warn, info, verbose, debug, silly
+    level: 'info', // fatal, error, warn, info, verbose, debug, trace
     logsDir: './logs',
     reqLogFormat: 'short', // used for morgan (request logging)
   },
 }
 ```
 
-`git-server` comes with a built-in winston logger. The log level (`error`, `warn`, `info`, `verbose`, `debug`, `silly`) can be set via the `logs.level` property in the config (see above).
-
-Alternatively you can pass your own winston logger instance:
-
-```javascript
-// git server
-const gitServer = require('@adobe/git-server/lib/server.js');
-// git server config
-const config = require('./config.js');
-// inject winston logger instance
-config.logger = require('winston').createLogger({ /* ... */ });
-
-gitServer.start(config);
-```
+`git-server` uses [helix-log](https://github.com/adobe/helix-log) for logging. The log level (`fatal`, `error`, `warn`, `info`, `verbose`, `debug`, `trace`) can be set via the `logs.level` property in the config (see above). For more information please refer to the [helix-log](https://github.com/adobe/helix-log) project.
 
 ### 1. Create a local Git repository
 
@@ -132,7 +119,7 @@ gitServer.start(config);
 cd ./repos
 # create org
 mkdir helix && cd helix
-# initialize new git repo 
+# initialize new git repo
 mkdir test && cd test && git init
 # allow to remotely push to this repo
 git config receive.denyCurrentBranch updateInstead
@@ -195,7 +182,7 @@ Local examples:
 
 ### <a name="xfer_prot"></a>2. Git HTTP Transfer Protocols
 
-Support for `git clone, push, fetch` 
+Support for `git clone, push, fetch`
 
 Documentation:
 
@@ -204,7 +191,7 @@ Documentation:
 
 #### `git push` support
 
-The served local repo needs to be either a *bare* repo (`git clone --bare` or `git init --bare`) or the following option needs to be set: 
+The served local repo needs to be either a *bare* repo (`git clone --bare` or `git init --bare`) or the following option needs to be set:
 
 ```bash
 git config receive.denyCurrentBranch updateInstead
@@ -214,7 +201,7 @@ git config receive.denyCurrentBranch updateInstead
 
 ### 3. GitHub API v3
 
-Documentation: https://developer.github.com/v3/
+Documentation: [GitHub API v3](https://developer.github.com/v3/)
 
 GitHub Endpoint: `https://api.github.com/`
 
@@ -255,7 +242,7 @@ _(not yet implemented)_
 
 Endpoint: `https://github.com/`
 
-e.g. 
+e.g.
 
   `https://github.com/{owner}/{repo}`,
   `https://github.com/{owner}/{repo}/blob/{branch}/path/to/file`

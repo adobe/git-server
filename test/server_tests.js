@@ -87,7 +87,7 @@ async function initRepository(dir) {
 }
 
 describe('Server Test', function suite() {
-  this.timeout(30000);
+  this.timeout(10000);
 
   let testRepoRoot;
 
@@ -98,9 +98,10 @@ describe('Server Test', function suite() {
     await initRepository(path.resolve(testRepoRoot, 'owner1/repo1'));
   });
 
-  after(async () => {
+  after(() => {
     // cleanup: remove tmp repo root
-    await fse.remove(testRepoRoot);
+    // Note: the async variant of remove hangs for some reason on windows
+    fse.removeSync(testRepoRoot);
   });
 
   afterEach(async () => {

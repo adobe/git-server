@@ -19,6 +19,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@adobe/helix-log": "1.1.0",
     "archiver": "^3.0.0",
     "async": "^3.0.1",
     "escape-html": "^1.0.3",
@@ -32,8 +33,7 @@
     "mime": "^2.3.1",
     "morgan": "^1.9.1",
     "pem": "^1.13.1",
-    "snyk": "1.193.2",
-    "winston": "^3.1.0"
+    "snyk": "1.193.2"
   },
   "devDependencies": {
     "codecov": "^3.1.0",
