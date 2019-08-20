@@ -6,12 +6,13 @@
   "scripts": {
     "start": "node ./index.js",
     "test": "nyc mocha",
+    "test-ci": "circleci tests glob 'test/test*.js' | circleci tests split --split-by=timings | xargs nyc --reporter=text --reporter=lcov mocha -R mocha-junit-reporter && codecov",
+    "test-ci-win": ".\\node_modules\\.bin\\mocha --reporter xunit test --reporter-options output=junit/test.xml",
     "lint": "./node_modules/.bin/eslint .",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
-    "preversion": "npm test",
-    "postversion": "git push origin master --follow-tags",
-    "delete-git-tag": "git tag -d v$npm_package_version && git push origin :v$npm_package_version"
+    "semantic-release": "semantic-release",
+    "commit": "git-cz"
   },
   "repository": {
     "type": "git",
@@ -20,38 +21,50 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@adobe/helix-log": "1.1.0",
-    "archiver": "^3.0.0",
+    "archiver": "^3.1.1",
     "async": "^3.0.1",
     "escape-html": "^1.0.3",
     "express": "^4.16.3",
     "fs-extra": "^8.0.0",
     "git-http-backend": "^1.0.2",
-    "ignore": "^5.0.2",
+    "ignore": "^5.1.4",
     "isomorphic-git": "^0.55.6",
     "klaw": "^3.0.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "mime": "^2.3.1",
     "morgan": "^1.9.1",
     "pem": "^1.13.1",
     "snyk": "1.193.2"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^3.0.4",
+    "@semantic-release/exec": "^3.3.6",
+    "@semantic-release/git": "^7.0.16",
+    "@semantic-release/github": "^5.4.2",
     "codecov": "^3.1.0",
+    "commitizen": "4.0.3",
+    "cz-conventional-changelog": "3.0.2",
     "eslint": "^5.6.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-header": "^3.0.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react": "^7.14.3",
     "istanbul": "^1.1.0-alpha.1",
-    "mocha": "^6.1.4",
+    "mocha": "^6.2.0",
     "mocha-junit-reporter": "^1.18.0",
     "nyc": "^14.0.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
+    "semantic-release": "^15.13.21",
     "shelljs": "^0.8.2",
     "tcp-port-used": "^1.0.0",
     "tmp": "0.1.0"
   },
-  "snyk": true
+  "snyk": true,
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  }
 }
