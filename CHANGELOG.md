@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/adobe/git-server/compare/v1.0.0...v1.0.1) (2019-11-04)
+
+
+### Bug Fixes
+
+* **deps:** update any ([2369961](https://github.com/adobe/git-server/commit/236996146cf6115d971dfb612aa405d6a465f02f))
+
 # [1.0.0](https://github.com/adobe/git-server/compare/v0.9.18...v1.0.0) (2019-08-20)
 
 
