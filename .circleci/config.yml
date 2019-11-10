@@ -27,7 +27,7 @@ commands:
 jobs:
   build_win:
     parallelism: 1
-    executor: win/preview-default
+    executor: win/default
     steps:
       - run: choco install nodejs --version 8.16.0
       - run: git config --global core.autocrlf false
