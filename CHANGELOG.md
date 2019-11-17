@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/adobe/git-server/compare/v1.0.4...v1.0.5) (2019-11-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency snyk to v1.248.0 ([5afc33f](https://github.com/adobe/git-server/commit/5afc33fdc2bb5a6576b74a017962e8971ce0f66d))
+
 ## [1.0.4](https://github.com/adobe/git-server/compare/v1.0.3...v1.0.4) (2019-11-08)
 
 
