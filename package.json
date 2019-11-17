@@ -34,7 +34,7 @@
     "mime": "^2.3.1",
     "morgan": "^1.9.1",
     "pem": "^1.13.1",
-    "snyk": "1.244.0"
+    "snyk": "1.248.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "3.0.5",
