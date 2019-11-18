@@ -9,8 +9,6 @@
     "test-ci": "circleci tests glob 'test/test*.js' | circleci tests split --split-by=timings | xargs nyc --reporter=text --reporter=lcov mocha -R mocha-junit-reporter && codecov",
     "test-ci-win": ".\\node_modules\\.bin\\mocha --reporter xunit test --reporter-options output=junit/test.xml",
     "lint": "./node_modules/.bin/eslint .",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect",
     "semantic-release": "semantic-release",
     "commit": "git-cz"
   },
@@ -33,8 +31,7 @@
     "lodash": "^4.17.15",
     "mime": "^2.3.1",
     "morgan": "^1.9.1",
-    "pem": "^1.13.1",
-    "snyk": "1.248.0"
+    "pem": "^1.13.1"
   },
   "devDependencies": {
     "@semantic-release/changelog": "3.0.5",
@@ -57,7 +54,6 @@
     "tcp-port-used": "1.0.1",
     "tmp": "0.1.0"
   },
-  "snyk": true,
   "config": {
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
