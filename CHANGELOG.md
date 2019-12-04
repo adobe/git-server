@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/adobe/git-server/compare/v1.0.6...v1.0.7) (2019-12-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v4.2.0 ([7d2c3db](https://github.com/adobe/git-server/commit/7d2c3db87a49b67b724e726dd179bc8cf2b8ad79))
+
 ## [1.0.6](https://github.com/adobe/git-server/compare/v1.0.5...v1.0.6) (2019-11-22)
 
 
