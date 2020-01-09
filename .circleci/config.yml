@@ -29,7 +29,7 @@ jobs:
     parallelism: 1
     executor: win/default
     steps:
-      - run: choco install nodejs --version=10.18.0
+      - run: choco install nodejs-lts
       - run: git config --global core.autocrlf false
       - run:
           name: prepare test git user
