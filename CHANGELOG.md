@@ -1,3 +1,10 @@
+## [1.0.11](https://github.com/adobe/git-server/compare/v1.0.10...v1.0.11) (2020-01-09)
+
+
+### Bug Fixes
+
+* **log:** use helix-log SimpleInterface ([7766192](https://github.com/adobe/git-server/commit/7766192018ba11d4f150df730e1681dd1c01d69d)), closes [#147](https://github.com/adobe/git-server/issues/147)
+
 ## [1.0.10](https://github.com/adobe/git-server/compare/v1.0.9...v1.0.10) (2019-12-18)
 
 
