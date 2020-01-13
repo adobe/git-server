@@ -35,8 +35,8 @@
   },
   "devDependencies": {
     "@semantic-release/changelog": "3.0.6",
-    "@semantic-release/git": "7.0.18",
-    "@semantic-release/github": "5.5.5",
+    "@semantic-release/git": "8.0.0",
+    "@semantic-release/github": "6.0.1",
     "codecov": "3.6.1",
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.0.2",
@@ -49,7 +49,7 @@
     "nyc": "15.0.0",
     "request": "2.88.0",
     "request-promise-native": "1.0.8",
-    "semantic-release": "15.14.0",
+    "semantic-release": "16.0.1",
     "shelljs": "0.8.3",
     "tcp-port-used": "1.0.1",
     "tmp": "0.1.0"
