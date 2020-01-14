@@ -1,3 +1,11 @@
+## [1.0.12](https://github.com/adobe/git-server/compare/v1.0.11...v1.0.12) (2020-01-14)
+
+
+### Bug Fixes
+
+* **ci:** update to node 10 and debian-stretch ([5e68449](https://github.com/adobe/git-server/commit/5e684490410f9cc8484452ddb6c910ebb7a9f596))
+* **deps:** update dependency @adobe/helix-log to v4.4.2 ([db75c9b](https://github.com/adobe/git-server/commit/db75c9bbf39d40be6000c62605e10083d2adb68a))
+
 ## [1.0.11](https://github.com/adobe/git-server/compare/v1.0.10...v1.0.11) (2020-01-09)
 
 
