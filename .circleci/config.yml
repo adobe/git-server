@@ -53,7 +53,7 @@ jobs:
   build:
     parallelism: 1
     docker:
-      - image: circleci/node:8-jessie
+      - image: circleci/node:10-stretch
     working_directory: ~/repo
 
     steps:
@@ -74,7 +74,7 @@ jobs:
   release:
     parallelism: 1
     docker:
-      - image: circleci/node:8-jessie
+      - image: circleci/node:10-stretch
     working_directory: ~/repo
     steps:
       - setup
