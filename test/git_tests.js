@@ -23,20 +23,10 @@ const tmp = require('tmp');
 const {
   currentBranch,
   getRawContent,
-  resolveTree,
   resolveCommit,
-  resolveBlob,
-  isCheckedOut,
-  createBlobReadStream,
-  getObject,
-  isValidSha,
-  commitLog,
-  determineRefPathName,
 } = require('../lib/git.js');
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
-
-const SOME_RANDOM_SHA = '7e30e826a2bf98b8c34408048754d8851980affd';
 
 if (!shell.which('git')) {
   shell.echo('Sorry, this tests requires git');
