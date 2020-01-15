@@ -26,6 +26,8 @@ const server = require('../lib/server.js');
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
 
+const SOME_RANDOM_SHA = '7e30e826a2bf98b8c34408048754d8851980affd';
+
 if (!shell.which('git')) {
   shell.echo('Sorry, this tests requires git');
   shell.exit(1);
@@ -106,6 +108,19 @@ describe('Server Test', function suite() {
 
   afterEach(async () => {
     await server.stop();
+  });
+
+  it('Uses config.js in cwd', async () => {
+    const configFilePath = path.join(process.cwd(), 'config.js');
+    assert(await fse.exists(configFilePath));
+    /* eslint-disable global-require */
+    /* eslint-disable import/no-dynamic-require */
+    const config = require(configFilePath);
+    const state = await server.start();
+    assert.equal(state.httpPort, config.listen.http.port);
+    await checkPort(state.httpPort, true);
+    await server.stop();
+    await checkPort(state.httpPort, false);
   });
 
   it('Starts http server on default port', async () => {
@@ -421,6 +436,28 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
+  it('GitHub codeload request (zip) returns correct mime type', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    const resp = await rp({
+      uri: `http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/master`,
+      resolveWithFullResponse: true,
+      simple: false,
+      rejectUnauthorized: false,
+      followRedirect: false,
+    });
+    assert.strictEqual(resp.statusCode, 200);
+    assert.strictEqual(resp.headers['content-type'], 'application/zip');
+    await server.stop();
+  });
+
   it('Delivers 200 for GitHub codeload request (zip, non-master branch)', async () => {
     const state = await server.start({
       configPath: '<internal>',
@@ -527,11 +564,70 @@ describe('Server Test', function suite() {
         },
       },
     });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits`, 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API list-commits with sha', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    let commits = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits`,
+      json: true,
+    });
+    assert(commits.length);
+    const { sha } = commits[0];
+    commits = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=${sha}`,
+      json: true,
+    });
+    assert(commits.length);
+    assert.strictEqual(commits[0].sha, sha);
+    commits = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=${sha.substr(0, 7)}`,
+      json: true,
+    });
+    assert(commits.length);
+    assert.strictEqual(commits[0].sha, sha);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API list-commits with ref', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
     await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=master`, 200);
     await server.stop();
   });
 
-  it('Delivers 200 for GitHub API list-commits', async () => {
+  it('Delivers 404 for GitHub API list-commits with nonexisting ref', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=doesnotexist`, 404);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API list-commits with path', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
@@ -542,10 +638,29 @@ describe('Server Test', function suite() {
       },
     });
     await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?path=README.md`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?path=/README.md`, 200);
     await server.stop();
   });
 
-  it('Delivers 200 for GitHub API get-contents (file)', async () => {
+  it('Delivers [] for GitHub API list-commits with nonexisting path', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    const commits = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?path=nonexisting.file`,
+      json: true,
+    });
+    assert.strictEqual(commits.length, 0);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API get-contents (file) (ref)', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
@@ -556,6 +671,29 @@ describe('Server Test', function suite() {
       },
     });
     await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`, 200);
+    await server.stop();
+  });
+
+  it('Delivers 200 for GitHub API get-contents (file) (sha)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    // determine commit sha
+    const commits = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits`,
+      json: true,
+    });
+    assert(commits.length);
+    const { sha } = commits[0];
+
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=${sha}`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=${sha.substr(0, 7)}`, 200);
     await server.stop();
   });
 
@@ -615,8 +753,9 @@ describe('Server Test', function suite() {
       uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=master`,
       json: true,
     });
-    assert.strictEqual(entries.length, 2);
+    assert.strictEqual(entries.length, 3);
     assert.strictEqual(entries.filter((entry) => entry.name === 'README.md' && entry.type === 'file').length, 1);
+    assert.strictEqual(entries.filter((entry) => entry.name === '.gitignore' && entry.type === 'file').length, 1);
     assert.strictEqual(entries.filter((entry) => entry.name === 'sub' && entry.type === 'dir').length, 1);
     const fileEntry = entries.filter((entry) => entry.name === 'README.md' && entry.type === 'file')[0];
     const blob = await rp({
@@ -641,16 +780,37 @@ describe('Server Test', function suite() {
       uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/master`,
       json: true,
     });
-    assert.strictEqual(resp.tree.length, 2);
+    assert.strictEqual(resp.tree.length, 3);
     assert.strictEqual(resp.tree.filter((entry) => entry.type === 'tree').length, 1);
-    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'blob').length, 1);
+    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'blob').length, 2);
+    const treeSha = resp.tree.filter((entry) => entry.type === 'tree')[0].sha;
+    resp = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${treeSha}`,
+      json: true,
+    });
+    assert.strictEqual(resp.tree.length, 1);
+    const shortenedTreeSha = treeSha.substr(0, 7);
+    resp = await rp({
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${shortenedTreeSha}`,
+      json: true,
+    });
+    assert.strictEqual(resp.tree.length, 1);
+    try {
+      resp = await rp({
+        uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${SOME_RANDOM_SHA}`,
+        json: true,
+      });
+      assert.fail();
+    } catch (err) {
+      assert.strictEqual(err.statusCode, 404);
+    }
     resp = await rp({
       uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/master?recursive=1`,
       json: true,
     });
-    assert.strictEqual(resp.tree.length, 4);
+    assert.strictEqual(resp.tree.length, 5);
     assert.strictEqual(resp.tree.filter((entry) => entry.type === 'tree').length, 2);
-    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'blob').length, 2);
+    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'blob').length, 3);
     await server.stop();
   });
 
@@ -743,6 +903,34 @@ describe('Server Test', function suite() {
       json: true,
     });
     assert.equal(content.sha, blob.sha);
+    await server.stop();
+  });
+
+  it('GitHub API get-blob returns 422 (invalid sha)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/01020304050607`, 422);
+    await server.stop();
+  });
+
+  it('GitHub API get-blob returns 404 (blob not found)', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${SOME_RANDOM_SHA}`, 404);
     await server.stop();
   });
 
