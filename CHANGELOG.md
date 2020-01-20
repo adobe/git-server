@@ -1,3 +1,10 @@
+## [1.0.13](https://github.com/adobe/git-server/compare/v1.0.12...v1.0.13) (2020-01-20)
+
+
+### Bug Fixes
+
+* **deps:** update external ([#154](https://github.com/adobe/git-server/issues/154)) ([dea4657](https://github.com/adobe/git-server/commit/dea4657c0235d15f3ee215737d2173dede7c966f))
+
 ## [1.0.12](https://github.com/adobe/git-server/compare/v1.0.11...v1.0.12) (2020-01-14)
 
 
