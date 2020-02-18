@@ -1,3 +1,10 @@
+## [1.0.15](https://github.com/adobe/git-server/compare/v1.0.14...v1.0.15) (2020-02-18)
+
+
+### Bug Fixes
+
+* **server:** close idle connections on server stop ([fd5fb78](https://github.com/adobe/git-server/commit/fd5fb78026f20e7a30fd2b84d911627f2caaa254)), closes [#162](https://github.com/adobe/git-server/issues/162)
+
 ## [1.0.14](https://github.com/adobe/git-server/compare/v1.0.13...v1.0.14) (2020-01-22)
 
 
