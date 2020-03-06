@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/adobe/git-server/compare/v1.0.16...v1.1.0) (2020-03-06)
+
+
+### Features
+
+* port to isomorphic-git v1 ([58a9d64](https://github.com/adobe/git-server/commit/58a9d644c4383c2cce062aaeaab1daab19991376)), closes [#170](https://github.com/adobe/git-server/issues/170)
+
 ## [1.0.16](https://github.com/adobe/git-server/compare/v1.0.15...v1.0.16) (2020-02-25)
 
 
