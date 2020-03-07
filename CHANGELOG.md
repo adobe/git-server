@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/adobe/git-server/compare/v1.1.0...v1.1.1) (2020-03-07)
+
+
+### Bug Fixes
+
+* adapt to latest isomorphic-git changes ([3c5d561](https://github.com/adobe/git-server/commit/3c5d5610e457a3f8bb439053f047a9bdedacddaa))
+
 # [1.1.0](https://github.com/adobe/git-server/compare/v1.0.16...v1.1.0) (2020-03-06)
 
 
