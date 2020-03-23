@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/adobe/git-server/compare/v1.1.1...v1.1.2) (2020-03-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v9 ([ee167ad](https://github.com/adobe/git-server/commit/ee167ad36474b6d14aba540443776495cb285ae2))
+
 ## [1.1.1](https://github.com/adobe/git-server/compare/v1.1.0...v1.1.1) (2020-03-07)
 
 
