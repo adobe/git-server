@@ -35,7 +35,7 @@
     "pem": "^1.13.1"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "5.0.0",
+    "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@semantic-release/github": "7.0.5",
     "codecov": "3.6.5",
@@ -44,7 +44,7 @@
     "eslint": "6.8.0",
     "eslint-config-airbnb-base": "14.1.0",
     "eslint-plugin-header": "3.0.0",
-    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-import": "2.20.2",
     "mocha": "7.1.1",
     "mocha-junit-reporter": "1.23.3",
     "nyc": "15.0.0",
