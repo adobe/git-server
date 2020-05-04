@@ -39,7 +39,7 @@
     "@semantic-release/git": "9.0.0",
     "@semantic-release/github": "7.0.5",
     "codecov": "3.6.5",
-    "commitizen": "4.0.4",
+    "commitizen": "4.0.5",
     "cz-conventional-changelog": "3.1.0",
     "eslint": "6.8.0",
     "eslint-config-airbnb-base": "14.1.0",
@@ -53,7 +53,7 @@
     "semantic-release": "17.0.7",
     "shelljs": "0.8.4",
     "tcp-port-used": "1.0.1",
-    "tmp": "0.2.0"
+    "tmp": "0.2.1"
   },
   "config": {
     "commitizen": {
