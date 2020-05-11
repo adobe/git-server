@@ -1,3 +1,4 @@
 .vscode/*
 logs/*
 repos/*
+.eslintrc.js
