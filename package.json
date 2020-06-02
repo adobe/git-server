@@ -47,7 +47,7 @@
     "eslint-plugin-import": "2.20.2",
     "mocha": "7.2.0",
     "mocha-junit-reporter": "1.23.3",
-    "nyc": "15.0.1",
+    "nyc": "15.1.0",
     "request": "2.88.2",
     "request-promise-native": "1.0.8",
     "semantic-release": "17.0.8",
