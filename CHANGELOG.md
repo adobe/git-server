@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/adobe/git-server/compare/v1.1.3...v1.2.0) (2020-06-21)
+
+
+### Features
+
+* **server:** add option to specify listener for raw requests ([#199](https://github.com/adobe/git-server/issues/199)) ([61d945a](https://github.com/adobe/git-server/commit/61d945af26ab213d689a6f680acf5cd6854e41f4))
+
 ## [1.1.3](https://github.com/adobe/git-server/compare/v1.1.2...v1.1.3) (2020-04-20)
 
 
