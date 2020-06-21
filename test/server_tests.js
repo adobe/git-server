@@ -1009,4 +1009,51 @@ describe('Server Test', function suite() {
     shell.cd(pwd);
     await server.stop();
   });
+
+  it('calls raw request listener.', async () => {
+    const data = {};
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+      onRawRequest: ({
+        req, repoPath, filePath, ref,
+      }) => {
+        // we can't test the entire request, so we just use the host header.
+        data.host = req.headers.host;
+        data.repoPath = repoPath;
+        data.filePath = filePath;
+        data.ref = ref;
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`, 200, 'expected_readme.md');
+    await server.stop();
+    assert.deepEqual(data, {
+      host: `localhost:${state.httpPort}`,
+      repoPath: path.resolve(testRepoRoot, 'owner1', 'repo1'),
+      filePath: 'README.md',
+      ref: 'master',
+    });
+  });
+
+  it('ignores errors in raw request listener.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+      onRawRequest: () => {
+        throw new Error('rumpel.');
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`, 200, 'expected_readme.md');
+    await server.stop();
+  });
 });
