@@ -41,7 +41,7 @@
     "codecov": "3.7.0",
     "commitizen": "4.1.2",
     "cz-conventional-changelog": "3.2.0",
-    "eslint": "7.2.0",
+    "eslint": "7.3.1",
     "eslint-config-airbnb-base": "14.2.0",
     "eslint-plugin-header": "3.0.0",
     "eslint-plugin-import": "2.21.2",
@@ -50,7 +50,7 @@
     "nyc": "15.1.0",
     "request": "2.88.2",
     "request-promise-native": "1.0.8",
-    "semantic-release": "17.0.8",
+    "semantic-release": "17.1.0",
     "shelljs": "0.8.4",
     "tcp-port-used": "1.0.1",
     "tmp": "0.2.1"
