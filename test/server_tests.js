@@ -310,6 +310,20 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
+  it('Delivers 404 for raw content that does not exist and is ignored.', async () => {
+    const state = await server.start({
+      configPath: '<internal>',
+      repoRoot: testRepoRoot,
+      listen: {
+        http: {
+          port: 0,
+        },
+      },
+    });
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/ignored.txt`, 404);
+    await server.stop();
+  });
+
   it('Delivers 404 for raw content for non-existing branch', async () => {
     const state = await server.start({
       configPath: '<internal>',
