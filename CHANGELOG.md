@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/adobe/git-server/compare/v1.2.0...v1.2.1) (2020-07-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lodash to v4.17.19 [security] ([a07fc1a](https://github.com/adobe/git-server/commit/a07fc1a0f44ab7788b0714e28db4234111afeba3))
+
 # [1.2.0](https://github.com/adobe/git-server/compare/v1.1.3...v1.2.0) (2020-06-21)
 
 
