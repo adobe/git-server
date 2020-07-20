@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/adobe/git-server/compare/v1.2.1...v1.2.2) (2020-07-20)
+
+
+### Bug Fixes
+
+* **git:** raw requests on ignored, non-existent files should not return 500 ([d48dffa](https://github.com/adobe/git-server/commit/d48dffab7c55e4fc73e4a09ce55af691198c3785)), closes [#205](https://github.com/adobe/git-server/issues/205)
+
 ## [1.2.1](https://github.com/adobe/git-server/compare/v1.2.0...v1.2.1) (2020-07-16)
 
 
