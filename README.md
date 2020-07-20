@@ -4,7 +4,7 @@
 
 [![codecov](https://img.shields.io/codecov/c/github/adobe/git-server.svg)](https://codecov.io/gh/adobe/git-server)
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/git-server.svg)](https://circleci.com/gh/adobe/git-server)
-[![GitHub license](https://img.shields.io/github/license/adobe/git-server.svg)](https://github.com/adobe/git-server/blob/master/LICENSE.txt)
+[![GitHub license](https://img.shields.io/github/license/adobe/git-server.svg)](https://github.com/adobe/git-server/blob/main/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/git-server.svg)](https://github.com/adobe/git-server/issues)
 [![Renovate](https://badges.renovateapi.com/github/adobe/git-server)](https://github.com/marketplace/renovate)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/git-server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/git-server/context:javascript)
@@ -139,7 +139,7 @@ npm start
 ### 3. Fetch raw content of file in Git repo over http
 
 ```bash
-curl http://localhost:5000/raw/helix/test/master/README.md
+curl http://localhost:5000/raw/helix/test/main/README.md
 ```
 
 ## Git Protocols and APIs
@@ -153,7 +153,7 @@ The requested file is specified by:
 * `{owner}`: GitHub organization or user
 * `{repo}`: repository name
 * `{ref}`: Git reference
-  * branch name (e.g. `master`)
+  * branch name (e.g. `main`)
   * tag name (e.g. `v1.0`)
   * (full or shorthand) commit id (e.g. `7aeff3d`)
 
@@ -170,14 +170,14 @@ Local `git-server` URLs:
 
 Remote examples:
 
-* `https://raw.githubusercontent.com/adobe/project-helix/master/README.md`
-* `https://github.com/adobe/project-helix/raw/master/README.md`
+* `https://raw.githubusercontent.com/adobe/git-server/main/README.md`
+* `https://github.com/adobe/git-server/raw/main/README.md`
 
 Local examples:
 
-* `http://raw.localtest.me:5000/adobe/project-helix/master/README.md`
-* `http://localhost:5000/adobe/project-helix/raw/master/README.md`
-* `http://localhost:5000/raw/adobe/project-helix/master/README.md`
+* `http://raw.localtest.me:5000/adobe/git-server/main/README.md`
+* `http://localhost:5000/adobe/git-server/raw/main/README.md`
+* `http://localhost:5000/raw/adobe/git-server/main/README.md`
 
 `raw.githubusercontent.com` serves certain file types (e.g. JavaScript, CSS, HTML) with incorrect `Content-Type: text/plain` header. 3rd party solutions like `rawgit.com` address this issue. `git-server` serves files with correct content type.
 
@@ -226,15 +226,15 @@ Only a small subset of the GitHub API will be supported:
 
   _Note:_  This method returns a `302` to a URL to download a tarball or zipball archive for a repository. `git-server` also supports an unofficial `https://codeload.github.com` endpoint that is not rate limited and that doesn't redirect:
 
-  * `https://codeload.github.com/{owner}/{repo}/[zip|tar.gz]/master`
+  * `https://codeload.github.com/{owner}/{repo}/[zip|tar.gz]/main`
 
   Related issue/discussion: [#5 Support codeload.github.com](https://github.com/adobe/git-server/issues/5#issuecomment-403072428)
 
 Local examples:
 
-* `http://api.localtest.me:5000/repos/adobe/project-helix/contents/README.md?ref=master`
+* `http://api.localtest.me:5000/repos/adobe/git-server/contents/README.md?ref=main`
 * `http://api.localtest.me:5000/repos/adobe/project-helix/git/blobs/bf13fe66cbee379db6a3e4ebf0300b8bbc0f01b7`
-* `http://localhost:5000/api/repos/adobe/project-helix/contents/README.md?ref=master`
+* `http://localhost:5000/api/repos/adobe/git-server/contents/README.md?ref=main`
 * `http://localhost:5000/api/repos/adobe/project-helix/git/blobs/bf13fe66cbee379db6a3e4ebf0300b8bbc0f01b7`
 
 ### 4. GitHub-like Web Server

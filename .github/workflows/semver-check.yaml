@@ -1,7 +1,7 @@
 on:
   push:
     branches-ignore:
-      - 'master'
+      - 'main'
 
 jobs:
   ci_trigger:

@@ -93,11 +93,11 @@ workflows:
       - build
       - build_win
 
-      # releases on master
+      # releases on main
       - release:
           requires:
             - build
             - build_win
           filters:
             branches:
-              only: master
+              only: main

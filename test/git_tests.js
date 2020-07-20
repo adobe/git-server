@@ -39,6 +39,8 @@ async function initRepository(dir) {
   const pwd = shell.pwd();
   shell.cd(dir);
   shell.exec('git init');
+  // workaround for --initial-branch=main (supported as of git v.2.28.0)
+  shell.exec('git symbolic-ref HEAD refs/heads/main');
   shell.exec('mkdir sub');
   shell.exec(`mkdir ${path.join('sub', 'sub')}`);
   shell.touch(path.join('sub', 'sub', 'some_file.txt'));
@@ -58,13 +60,13 @@ async function initRepository(dir) {
   shell.exec('git commit -m "new_branch commit"');
 
   // setup 'config' branch
-  shell.exec('git checkout master');
+  shell.exec('git checkout main');
   shell.exec('git checkout -b config');
   shell.touch('config_file.txt');
   shell.exec('git add .');
   shell.exec('git commit -m "new_branch commit"');
 
-  shell.exec('git checkout master');
+  shell.exec('git checkout main');
   shell.cd(pwd);
 }
 
@@ -90,11 +92,11 @@ describe('Testing git.js', function suite() {
 
   it('currentBranch', async () => {
     const branch = await currentBranch(repoDir);
-    assert.strictEqual(branch, 'master');
+    assert.strictEqual(branch, 'main');
   });
 
   it('resolveCommit', async () => {
-    const commitSha = await resolveCommit(repoDir, 'master');
+    const commitSha = await resolveCommit(repoDir, 'main');
     let sha = await resolveCommit(repoDir, commitSha);
     assert.strictEqual(commitSha, sha);
     sha = await resolveCommit(repoDir, commitSha.substr(0, 7));
@@ -102,7 +104,7 @@ describe('Testing git.js', function suite() {
   });
 
   it('getRawContent', async () => {
-    const content = await getRawContent(repoDir, 'master', 'README.md', false);
+    const content = await getRawContent(repoDir, 'main', 'README.md', false);
     assert(content.length);
   });
 });
