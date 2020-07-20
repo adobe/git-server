@@ -59,8 +59,6 @@ async function initRepository(dir) {
   const pwd = shell.pwd();
   shell.cd(dir);
   shell.exec('git init');
-  // workaround for --initial-branch=main (supported as of git v.2.28.0)
-  shell.exec('git symbolic-ref HEAD refs/heads/main');
   shell.exec('mkdir sub');
   shell.exec(`mkdir ${path.join('sub', 'sub')}`);
   shell.touch(path.join('sub', 'sub', 'some_file.txt'));
@@ -80,13 +78,13 @@ async function initRepository(dir) {
   shell.exec('git commit -m "new_branch commit"');
 
   // setup 'config' branch
-  shell.exec('git checkout main');
+  shell.exec('git checkout master');
   shell.exec('git checkout -b config');
   shell.touch('config_file.txt');
   shell.exec('git add .');
   shell.exec('git commit -m "new_branch commit"');
 
-  shell.exec('git checkout main');
+  shell.exec('git checkout master');
   shell.cd(pwd);
 }
 
@@ -207,13 +205,13 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/README.md`, 200, 'expected_readme.md');
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`, 200, 'expected_readme.md');
     await server.stop();
   });
 
   it('Delivers raw non git content.', async () => {
-    const root = path.resolve(testRepoRoot, 'owner1', 'repo1');
-    await fse.copy(path.resolve(root, 'README.md'), path.resolve(root, 'new_file.md'));
+    const master = path.resolve(testRepoRoot, 'owner1', 'repo1');
+    await fse.copy(path.resolve(master, 'README.md'), path.resolve(master, 'new_file.md'));
 
     const state = await server.start({
       configPath: '<internal>',
@@ -224,7 +222,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/new_file.md`, 200, 'expected_readme.md');
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/new_file.md`, 200, 'expected_readme.md');
     await server.stop();
   });
 
@@ -238,7 +236,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/sub/sub//some_file.txt`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/sub/sub//some_file.txt`, 200);
     await server.stop();
   });
 
@@ -252,7 +250,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/rEaDmE.md`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/rEaDmE.md`, 404);
     await server.stop();
   });
 
@@ -308,7 +306,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/notexist.md`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/notexist.md`, 404);
     await server.stop();
   });
 
@@ -322,7 +320,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/ignored.txt`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/ignored.txt`, 404);
     await server.stop();
   });
 
@@ -350,7 +348,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/floppy/main/README.md`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/floppy/master/README.md`, 404);
     await server.stop();
   });
 
@@ -364,7 +362,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/noowner/repo1/main/README.md`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/raw/noowner/repo1/master/README.md`, 404);
     await server.stop();
   });
 
@@ -378,7 +376,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/zipball/main`, 302);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/zipball/master`, 302);
     await server.stop();
   });
 
@@ -392,7 +390,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/tarball/main`, 302);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/tarball/master`, 302);
     await server.stop();
   });
 
@@ -406,7 +404,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/archive/main.zip`, 302);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.zip`, 302);
     await server.stop();
   });
 
@@ -420,7 +418,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/archive/main.tar.gz`, 302);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/archive/master.tar.gz`, 302);
     await server.stop();
   });
 
@@ -434,7 +432,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.zip/main`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.zip/master`, 200);
     await server.stop();
   });
 
@@ -448,7 +446,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/main`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/master`, 200);
     await server.stop();
   });
 
@@ -463,7 +461,7 @@ describe('Server Test', function suite() {
       },
     });
     const resp = await rp({
-      uri: `http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/main`,
+      uri: `http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/master`,
       resolveWithFullResponse: true,
       simple: false,
       rejectUnauthorized: false,
@@ -474,7 +472,7 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
-  it('Delivers 200 for GitHub codeload request (zip, non-default branch)', async () => {
+  it('Delivers 200 for GitHub codeload request (zip, non-master branch)', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
@@ -488,7 +486,7 @@ describe('Server Test', function suite() {
     await server.stop();
   });
 
-  it('Delivers 200 for GitHub codeload request (zip, non-default branch with slash)', async () => {
+  it('Delivers 200 for GitHub codeload request (zip, non-master branch with slash)', async () => {
     const state = await server.start({
       configPath: '<internal>',
       repoRoot: testRepoRoot,
@@ -512,7 +510,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.tar.gz/main`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/legacy.tar.gz/master`, 200);
     await server.stop();
   });
 
@@ -526,7 +524,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/tar.gz/main`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/codeload/owner1/repo1/tar.gz/master`, 200);
     await server.stop();
   });
 
@@ -546,7 +544,7 @@ describe('Server Test', function suite() {
         ],
       },
     });
-    await assertResponse(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/main`, 200);
+    await assertResponse(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`, 200);
     await server.stop();
   });
 
@@ -566,7 +564,7 @@ describe('Server Test', function suite() {
         ],
       },
     });
-    await assertResponse(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/main`, 200);
+    await assertResponse(`http://codeload.localtest.me:${state.httpPort}/owner1/repo1/zip/master`, 200);
     await server.stop();
   });
 
@@ -625,7 +623,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=main`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=master`, 200);
     await server.stop();
   });
 
@@ -686,7 +684,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=main`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`, 200);
     await server.stop();
   });
 
@@ -751,7 +749,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=main`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=master`, 200);
     await server.stop();
   });
 
@@ -766,7 +764,7 @@ describe('Server Test', function suite() {
       },
     });
     const entries = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=main`,
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=master`,
       json: true,
     });
     assert.strictEqual(entries.length, 3);
@@ -793,7 +791,7 @@ describe('Server Test', function suite() {
       },
     });
     let resp = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/main`,
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/master`,
       json: true,
     });
     assert.strictEqual(resp.tree.length, 3);
@@ -821,7 +819,7 @@ describe('Server Test', function suite() {
       assert.strictEqual(err.statusCode, 404);
     }
     resp = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/main?recursive=1`,
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/master?recursive=1`,
       json: true,
     });
     assert.strictEqual(resp.tree.length, 5);
@@ -840,7 +838,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/blob/main/README.md`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README.md`, 200);
     await server.stop();
   });
 
@@ -854,7 +852,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/blob/main/README99.md`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/blob/master/README99.md`, 404);
     await server.stop();
   });
 
@@ -868,7 +866,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/tree/main/`, 200);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/`, 200);
     await server.stop();
   });
 
@@ -882,7 +880,7 @@ describe('Server Test', function suite() {
         },
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/tree/main/blahblah`, 404);
+    await assertResponse(`http://localhost:${state.httpPort}/owner1/repo1/tree/master/blahblah`, 404);
     await server.stop();
   });
 
@@ -911,7 +909,7 @@ describe('Server Test', function suite() {
       },
     });
     const content = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=main`,
+      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=master`,
       json: true,
     });
     const blob = await rp({
@@ -1014,14 +1012,14 @@ describe('Server Test', function suite() {
       },
     };
     await server.start(cfg);
-    assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'main');
+    assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'master');
     const pwd = shell.pwd();
     shell.cd(path.resolve(testRepoRoot, 'owner1/repo1'));
     shell.exec('git checkout new_branch');
     assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'new_branch');
     shell.exec('git checkout branch/with_slash');
     assert.equal((await server.getRepoInfo(cfg, 'owner1', 'repo1')).currentBranch, 'branch/with_slash');
-    shell.exec('git checkout main');
+    shell.exec('git checkout master');
     shell.cd(pwd);
     await server.stop();
   });
@@ -1046,13 +1044,13 @@ describe('Server Test', function suite() {
         data.ref = ref;
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/README.md`, 200, 'expected_readme.md');
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`, 200, 'expected_readme.md');
     await server.stop();
     assert.deepEqual(data, {
       host: `localhost:${state.httpPort}`,
       repoPath: path.resolve(testRepoRoot, 'owner1', 'repo1'),
       filePath: 'README.md',
-      ref: 'main',
+      ref: 'master',
     });
   });
 
@@ -1069,7 +1067,7 @@ describe('Server Test', function suite() {
         throw new Error('rumpel.');
       },
     });
-    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/main/README.md`, 200, 'expected_readme.md');
+    await assertResponse(`http://localhost:${state.httpPort}/raw/owner1/repo1/master/README.md`, 200, 'expected_readme.md');
     await server.stop();
   });
 });
