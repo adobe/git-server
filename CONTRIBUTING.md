@@ -66,4 +66,4 @@ Feedback on the pull request will be given in writing, in GitHub.
 
 # Release Management
 
-Releasing is done using [semantic-release](https://github.com/semantic-release/semantic-release), and every (relevant) commit to the `master` branch gets released automatically. The release will update the version number and add the recent changes to the [CHANGELOG.md](./CHANGELOG.md). It will also create a [release](https://github.com/adobe/helix-cli/releases) in github and finally publish the package to the [Adobe organization on npmjs.org](https://www.npmjs.com/org/adobe).
+Releasing is done using [semantic-release](https://github.com/semantic-release/semantic-release), and every (relevant) commit to the `main` branch gets released automatically. The release will update the version number and add the recent changes to the [CHANGELOG.md](./CHANGELOG.md). It will also create a [release](https://github.com/adobe/helix-cli/releases) in github and finally publish the package to the [Adobe organization on npmjs.org](https://www.npmjs.com/org/adobe).
