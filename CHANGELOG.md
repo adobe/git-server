@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/adobe/git-server/compare/v1.2.2...v1.3.0) (2020-07-20)
+
+
+### Features
+
+* replace references to "master" branch with "main" ([8b0feed](https://github.com/adobe/git-server/commit/8b0feed4c26017b648b99238af383a13ea77df86)), closes [#210](https://github.com/adobe/git-server/issues/210)
+
 ## [1.2.2](https://github.com/adobe/git-server/compare/v1.2.1...v1.2.2) (2020-07-20)
 
 
