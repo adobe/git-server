@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/adobe/git-server/compare/v1.3.0...v1.3.1) (2020-07-23)
+
+
+### Bug Fixes
+
+* **utils:** sanitize owner and repo name ([667d07e](https://github.com/adobe/git-server/commit/667d07e08fbe58288b53c5f245c5d8ca7aff4fca))
+
 # [1.3.0](https://github.com/adobe/git-server/compare/v1.2.2...v1.3.0) (2020-07-20)
 
 
