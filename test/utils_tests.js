@@ -18,6 +18,7 @@ const assert = require('assert');
 
 const {
   pathExists,
+  resolveRepositoryPath,
 } = require('../lib/utils');
 
 describe('Testing utils.js', () => {
@@ -25,5 +26,16 @@ describe('Testing utils.js', () => {
     const { dir, base } = path.parse(__filename);
     assert.ok(await pathExists(dir, base));
     assert.ok(!await pathExists(dir, base.toUpperCase()));
+  });
+
+  it('resolveRepositoryPath sanitizes owner and repo name', async () => {
+    const repoRoot = path.resolve('.');
+    const options = { repoRoot, virtualRepos: {} };
+    let p = resolveRepositoryPath(options, 'owner', 'repo');
+    assert.ok(p.startsWith(repoRoot));
+    p = resolveRepositoryPath(options, '../..', '.');
+    assert.ok(p.startsWith(repoRoot));
+    p = resolveRepositoryPath(options, 'foo/..', 'bar/.');
+    assert.ok(p.startsWith(repoRoot));
   });
 });
