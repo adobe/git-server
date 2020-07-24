@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/adobe/git-server/compare/v1.3.1...v1.3.2) (2020-07-24)
+
+
+### Bug Fixes
+
+* smarter fallback for default branch ([7057075](https://github.com/adobe/git-server/commit/7057075a0ab89d1164bd0e776273f8636fbc07b0))
+
 ## [1.3.1](https://github.com/adobe/git-server/compare/v1.3.0...v1.3.1) (2020-07-23)
 
 
