@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/adobe/git-server/compare/v1.3.2...v1.3.3) (2020-07-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency archiver to v5 ([a3c7665](https://github.com/adobe/git-server/commit/a3c7665f23b6ff218c4ce3f2603e0543f50bbf01))
+
 ## [1.3.2](https://github.com/adobe/git-server/compare/v1.3.1...v1.3.2) (2020-07-24)
 
 
