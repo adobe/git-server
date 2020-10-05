@@ -24,6 +24,7 @@ const {
   currentBranch,
   getRawContent,
   resolveCommit,
+  resolveTree,
 } = require('../lib/git.js');
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
@@ -67,6 +68,13 @@ async function initRepository(dir) {
   shell.exec('git commit -m "new_branch commit"');
 
   shell.exec('git checkout main');
+
+  // create annotated tag 'a-tag`
+  shell.exec('git tag -a a-tag -m "annotated tag"');
+
+  // create lightweight tag 'lw-tag`
+  shell.exec('git tag lw-tag');
+
   shell.cd(pwd);
 }
 
@@ -106,5 +114,20 @@ describe('Testing git.js', function suite() {
   it('getRawContent', async () => {
     const content = await getRawContent(repoDir, 'main', 'README.md', false);
     assert(content.length);
+  });
+
+  it('resolveTree (branch)', async () => {
+    const obj = await resolveTree(repoDir, 'main');
+    assert.strictEqual(obj.type, 'tree');
+  });
+
+  it('resolveTree (lightweight tag)', async () => {
+    const obj = await resolveTree(repoDir, 'lw-tag');
+    assert.strictEqual(obj.type, 'tree');
+  });
+
+  it('resolveTree (annotated tag)', async () => {
+    const obj = await resolveTree(repoDir, 'a-tag');
+    assert.strictEqual(obj.type, 'tree');
   });
 });
