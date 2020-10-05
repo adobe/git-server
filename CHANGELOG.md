@@ -1,3 +1,10 @@
+## [1.3.5](https://github.com/adobe/git-server/compare/v1.3.4...v1.3.5) (2020-10-05)
+
+
+### Bug Fixes
+
+* handle annotated tags ([bd63a21](https://github.com/adobe/git-server/commit/bd63a21939609945a56dd3f291a65aafe7157f8b)), closes [#230](https://github.com/adobe/git-server/issues/230)
+
 ## [1.3.4](https://github.com/adobe/git-server/compare/v1.3.3...v1.3.4) (2020-09-29)
 
 
