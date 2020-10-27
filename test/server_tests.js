@@ -19,10 +19,12 @@ const { promisify } = require('util');
 const shell = require('shelljs');
 const fse = require('fs-extra');
 const tcpPortUsed = require('tcp-port-used');
-const rp = require('request-promise-native');
+const { context } = require('@adobe/helix-fetch');
 const tmp = require('tmp');
 
 const server = require('../lib/server.js');
+
+const { fetch, disconnectAll } = context({ session: { rejectUnauthorized: false } });
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
 
@@ -37,17 +39,11 @@ const mkTmpDir = promisify(tmp.dir);
 
 // TODO: use replay ?
 async function assertResponse(uri, status, spec) {
-  const resp = await rp({
-    uri,
-    resolveWithFullResponse: true,
-    simple: false,
-    rejectUnauthorized: false,
-    followRedirect: false,
-  });
-  assert.equal(resp.statusCode, status);
+  const resp = await fetch(uri, { redirect: 'manual' });
+  assert.equal(resp.status, status);
   if (spec) {
     const expected = (await fse.readFile(path.resolve(__dirname, 'specs', spec))).toString();
-    assert.equal(resp.body, expected);
+    assert.equal(await resp.text(), expected);
   }
 }
 
@@ -102,6 +98,8 @@ describe('Server Test', function suite() {
   });
 
   after(() => {
+    // disconnect all sessions
+    disconnectAll();
     // cleanup: remove tmp repo root
     // Note: the async variant of remove hangs for some reason on windows
     fse.removeSync(testRepoRoot);
@@ -461,15 +459,9 @@ describe('Server Test', function suite() {
         },
       },
     });
-    const resp = await rp({
-      uri: `http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/main`,
-      resolveWithFullResponse: true,
-      simple: false,
-      rejectUnauthorized: false,
-      followRedirect: false,
-    });
-    assert.strictEqual(resp.statusCode, 200);
-    assert.strictEqual(resp.headers['content-type'], 'application/zip');
+    const resp = await fetch(`http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/main`);
+    assert.strictEqual(resp.status, 200);
+    assert.strictEqual(resp.headers.raw()['content-type'], 'application/zip');
     await server.stop();
   });
 
@@ -593,22 +585,16 @@ describe('Server Test', function suite() {
         },
       },
     });
-    let commits = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits`,
-      json: true,
-    });
+    let resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits`);
+    let commits = await resp.json();
     assert(commits.length);
     const { sha } = commits[0];
-    commits = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=${sha}`,
-      json: true,
-    });
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=${sha}`);
+    commits = await resp.json();
     assert(commits.length);
     assert.strictEqual(commits[0].sha, sha);
-    commits = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=${sha.substr(0, 7)}`,
-      json: true,
-    });
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?sha=${sha.substr(0, 7)}`);
+    commits = await resp.json();
     assert(commits.length);
     assert.strictEqual(commits[0].sha, sha);
     await server.stop();
@@ -667,10 +653,8 @@ describe('Server Test', function suite() {
         },
       },
     });
-    const commits = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?path=nonexisting.file`,
-      json: true,
-    });
+    const resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits?path=nonexisting.file`);
+    const commits = await resp.json();
     assert.strictEqual(commits.length, 0);
     await server.stop();
   });
@@ -700,10 +684,8 @@ describe('Server Test', function suite() {
       },
     });
     // determine commit sha
-    const commits = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits`,
-      json: true,
-    });
+    const resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/commits`);
+    const commits = await resp.json();
     assert(commits.length);
     const { sha } = commits[0];
 
@@ -764,19 +746,15 @@ describe('Server Test', function suite() {
         },
       },
     });
-    const entries = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=main`,
-      json: true,
-    });
+    let resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents?ref=main`);
+    const entries = await resp.json();
     assert.strictEqual(entries.length, 3);
     assert.strictEqual(entries.filter((entry) => entry.name === 'README.md' && entry.type === 'file').length, 1);
     assert.strictEqual(entries.filter((entry) => entry.name === '.gitignore' && entry.type === 'file').length, 1);
     assert.strictEqual(entries.filter((entry) => entry.name === 'sub' && entry.type === 'dir').length, 1);
     const fileEntry = entries.filter((entry) => entry.name === 'README.md' && entry.type === 'file')[0];
-    const blob = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${fileEntry.sha}`,
-      json: true,
-    });
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${fileEntry.sha}`);
+    const blob = await resp.json();
     assert.strictEqual(fileEntry.sha, blob.sha);
     await server.stop();
   });
@@ -791,41 +769,26 @@ describe('Server Test', function suite() {
         },
       },
     });
-    let resp = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/main`,
-      json: true,
-    });
-    assert.strictEqual(resp.tree.length, 3);
-    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'tree').length, 1);
-    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'blob').length, 2);
-    const treeSha = resp.tree.filter((entry) => entry.type === 'tree')[0].sha;
-    resp = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${treeSha}`,
-      json: true,
-    });
-    assert.strictEqual(resp.tree.length, 1);
+    let resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/main`);
+    let obj = await resp.json();
+    assert.strictEqual(obj.tree.length, 3);
+    assert.strictEqual(obj.tree.filter((entry) => entry.type === 'tree').length, 1);
+    assert.strictEqual(obj.tree.filter((entry) => entry.type === 'blob').length, 2);
+    const treeSha = obj.tree.filter((entry) => entry.type === 'tree')[0].sha;
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${treeSha}`);
+    obj = await resp.json();
+    assert.strictEqual(obj.tree.length, 1);
     const shortenedTreeSha = treeSha.substr(0, 7);
-    resp = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${shortenedTreeSha}`,
-      json: true,
-    });
-    assert.strictEqual(resp.tree.length, 1);
-    try {
-      resp = await rp({
-        uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${SOME_RANDOM_SHA}`,
-        json: true,
-      });
-      assert.fail();
-    } catch (err) {
-      assert.strictEqual(err.statusCode, 404);
-    }
-    resp = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/main?recursive=1`,
-      json: true,
-    });
-    assert.strictEqual(resp.tree.length, 5);
-    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'tree').length, 2);
-    assert.strictEqual(resp.tree.filter((entry) => entry.type === 'blob').length, 3);
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${shortenedTreeSha}`);
+    obj = await resp.json();
+    assert.strictEqual(obj.tree.length, 1);
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/${SOME_RANDOM_SHA}`);
+    assert.strictEqual(resp.status, 404);
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/trees/main?recursive=1`);
+    obj = await resp.json();
+    assert.strictEqual(obj.tree.length, 5);
+    assert.strictEqual(obj.tree.filter((entry) => entry.type === 'tree').length, 2);
+    assert.strictEqual(obj.tree.filter((entry) => entry.type === 'blob').length, 3);
     await server.stop();
   });
 
@@ -909,15 +872,11 @@ describe('Server Test', function suite() {
         },
       },
     });
-    const content = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=main`,
-      json: true,
-    });
-    const blob = await rp({
-      uri: `http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${content.sha}`,
-      json: true,
-    });
-    assert.equal(content.sha, blob.sha);
+    let resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/contents/README.md?ref=main`);
+    const content = await resp.json();
+    resp = await fetch(`http://localhost:${state.httpPort}/api/repos/owner1/repo1/git/blobs/${content.sha}`);
+    const blob = await resp.json();
+    assert.strictEqual(content.sha, blob.sha);
     await server.stop();
   });
 
