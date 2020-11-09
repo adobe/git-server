@@ -1,4 +1,3 @@
 {
-  "extends": ["github>adobe/helix-shared"],
-  "ignoreDeps": ["isomorphic-git"]
+  "extends": ["github>adobe/helix-shared"]
 }
