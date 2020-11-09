@@ -1,3 +1,10 @@
+## [1.3.7](https://github.com/adobe/git-server/compare/v1.3.6...v1.3.7) (2020-11-09)
+
+
+### Bug Fixes
+
+* use isomorphic-git 1.8.0 and use global cache for isomorphic-git APIs ([c6af315](https://github.com/adobe/git-server/commit/c6af315e44cf4487a592967ab203d62ba8e55a3c)), closes [#233](https://github.com/adobe/git-server/issues/233)
+
 ## [1.3.6](https://github.com/adobe/git-server/compare/v1.3.5...v1.3.6) (2020-10-31)
 
 
