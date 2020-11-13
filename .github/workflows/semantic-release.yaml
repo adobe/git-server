@@ -1,0 +1,22 @@
+name: Semantic Release
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - run: npm install
+      - run: npm test
+      - run: npm run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
