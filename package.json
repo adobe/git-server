@@ -50,7 +50,7 @@
     "mocha": "8.2.1",
     "mocha-junit-reporter": "2.0.0",
     "nyc": "15.1.0",
-    "semantic-release": "17.2.4",
+    "semantic-release": "17.3.0",
     "shelljs": "0.8.4",
     "tcp-port-used": "1.0.1",
     "tmp": "0.2.1"
