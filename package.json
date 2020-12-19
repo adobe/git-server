@@ -30,7 +30,7 @@
     "isomorphic-git": "1.8.0",
     "klaw": "3.0.0",
     "lodash": "4.17.20",
-    "mime": "2.4.6",
+    "mime": "2.4.7",
     "morgan": "1.10.0",
     "pem": "1.14.4"
   },
@@ -42,7 +42,7 @@
     "codecov": "3.8.1",
     "commitizen": "4.2.2",
     "cz-conventional-changelog": "3.3.0",
-    "eslint": "7.15.0",
+    "eslint": "7.16.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-plugin-header": "3.1.0",
     "eslint-plugin-import": "2.22.1",
@@ -52,7 +52,7 @@
     "nyc": "15.1.0",
     "semantic-release": "17.3.0",
     "shelljs": "0.8.4",
-    "tcp-port-used": "1.0.1",
+    "tcp-port-used": "1.0.2",
     "tmp": "0.2.1"
   },
   "config": {
