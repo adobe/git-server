@@ -1,3 +1,10 @@
+## [1.3.10](https://github.com/adobe/git-server/compare/v1.3.9...v1.3.10) (2021-01-23)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([28cdfd2](https://github.com/adobe/git-server/commit/28cdfd2879884e6497041dc306f7042d56586d90))
+
 ## [1.3.9](https://github.com/adobe/git-server/compare/v1.3.8...v1.3.9) (2021-01-09)
 
 
