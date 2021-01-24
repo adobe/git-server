@@ -1,12 +1,31 @@
-# git-server
+<h1>git-server</h1>
 
+A GitHub Protocol & API emulation.
+
+<!-- TOC -->
+- [Status](#status)
+- [Description](#description)
+- [Installation](#installation)
+- [Getting started](#getting-started)
+  - [1. Create a local Git repository](#1-create-a-local-git-repository)
+  - [2. Start server](#2-start-server)
+  - [3. Fetch raw content of file in Git repo over http](#3-fetch-raw-content-of-file-in-git-repo-over-http)
+- [Git Protocols and APIs](#git-protocols-and-apis)
+  - [1. Git Raw Protocol](#1-git-raw-protocol)
+  - [2. Git HTTP Transfer Protocols](#2-git-http-transfer-protocols)
+    - [`git push` support](#git-push-support)
+  - [3. GitHub API v3](#3-github-api-v3)
+  - [4. GitHub-like Web Server](#4-github-like-web-server)
+<!-- /TOC -->
+
+---
 ## Status
 
 [![codecov](https://img.shields.io/codecov/c/github/adobe/git-server.svg)](https://codecov.io/gh/adobe/git-server)
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/git-server.svg)](https://circleci.com/gh/adobe/git-server)
 [![GitHub license](https://img.shields.io/github/license/adobe/git-server.svg)](https://github.com/adobe/git-server/blob/main/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/git-server.svg)](https://github.com/adobe/git-server/issues)
-[![Renovate](https://badges.renovateapi.com/github/adobe/git-server)](https://github.com/marketplace/renovate)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/git-server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/git-server/context:javascript)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
@@ -144,7 +163,7 @@ curl http://localhost:5000/raw/helix/test/main/README.md
 
 ## Git Protocols and APIs
 
-### <a name="raw_prot"></a>1. Git Raw Protocol
+### 1. Git Raw Protocol
 
 Serving content of a file in a git repo.
 
@@ -181,7 +200,7 @@ Local examples:
 
 `raw.githubusercontent.com` serves certain file types (e.g. JavaScript, CSS, HTML) with incorrect `Content-Type: text/plain` header. 3rd party solutions like `rawgit.com` address this issue. `git-server` serves files with correct content type.
 
-### <a name="xfer_prot"></a>2. Git HTTP Transfer Protocols
+### 2. Git HTTP Transfer Protocols
 
 Support for `git clone, push, fetch`
 
