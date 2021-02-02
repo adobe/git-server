@@ -24,7 +24,7 @@ const tmp = require('tmp');
 
 const server = require('../lib/server.js');
 
-const { fetch, disconnectAll } = context({ session: { rejectUnauthorized: false } });
+const { fetch, reset } = context({ rejectUnauthorized: false });
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
 
@@ -40,10 +40,10 @@ const mkTmpDir = promisify(tmp.dir);
 // TODO: use replay ?
 async function assertResponse(uri, status, spec) {
   const resp = await fetch(uri, { redirect: 'manual' });
-  assert.equal(resp.status, status);
+  assert.strictEqual(resp.status, status);
   if (spec) {
     const expected = (await fse.readFile(path.resolve(__dirname, 'specs', spec))).toString();
-    assert.equal(await resp.text(), expected);
+    assert.strictEqual(await resp.text(), expected);
   }
 }
 
@@ -99,7 +99,7 @@ describe('Server Test', function suite() {
 
   after(() => {
     // disconnect all sessions
-    disconnectAll();
+    reset();
     // cleanup: remove tmp repo root
     // Note: the async variant of remove hangs for some reason on windows
     fse.removeSync(testRepoRoot);
@@ -461,7 +461,7 @@ describe('Server Test', function suite() {
     });
     const resp = await fetch(`http://localhost:${state.httpPort}/codeload/owner1/repo1/zip/main`);
     assert.strictEqual(resp.status, 200);
-    assert.strictEqual(resp.headers.raw()['content-type'], 'application/zip');
+    assert.strictEqual(resp.headers.plain()['content-type'], 'application/zip');
     await server.stop();
   });
 
