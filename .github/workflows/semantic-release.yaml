@@ -10,10 +10,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 10.x
+      - name: Use Node.js 12.x
         uses: actions/setup-node@v2
         with:
-          node-version: '10.x'
+          node-version: '12.x'
       - run: npm install
       - run: git config --global user.email "test@example.com"
       - run: git config --global user.name "Test User"

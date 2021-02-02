@@ -35,14 +35,14 @@
     "pem": "1.14.4"
   },
   "devDependencies": {
-    "@adobe/helix-fetch": "1.9.2",
+    "@adobe/helix-fetch": "2.1.0",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@semantic-release/github": "7.2.0",
     "codecov": "3.8.1",
     "commitizen": "4.2.3",
     "cz-conventional-changelog": "3.3.0",
-    "eslint": "7.18.0",
+    "eslint": "7.19.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-plugin-header": "3.1.0",
     "eslint-plugin-import": "2.22.1",
