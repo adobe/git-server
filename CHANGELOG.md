@@ -1,3 +1,10 @@
+## [1.3.11](https://github.com/adobe/git-server/compare/v1.3.10...v1.3.11) (2021-02-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency http-terminator to v3 ([1362a58](https://github.com/adobe/git-server/commit/1362a5826b6531e989c6ac68f66627dfb89c7b92))
+
 ## [1.3.10](https://github.com/adobe/git-server/compare/v1.3.9...v1.3.10) (2021-01-23)
 
 
