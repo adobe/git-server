@@ -1,3 +1,10 @@
+## [1.3.12](https://github.com/adobe/git-server/compare/v1.3.11...v1.3.12) (2021-02-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency mime to v2.5.2 ([8dd1ff8](https://github.com/adobe/git-server/commit/8dd1ff84824c76879029c1787ecb159f1b763606))
+
 ## [1.3.11](https://github.com/adobe/git-server/compare/v1.3.10...v1.3.11) (2021-02-15)
 
 
