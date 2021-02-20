@@ -1,3 +1,10 @@
+## [1.3.13](https://github.com/adobe/git-server/compare/v1.3.12...v1.3.13) (2021-02-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lodash to v4.17.21 ([ddc313a](https://github.com/adobe/git-server/commit/ddc313a21f9b85930dc8a4573a761cbdfca41153))
+
 ## [1.3.12](https://github.com/adobe/git-server/compare/v1.3.11...v1.3.12) (2021-02-20)
 
 
