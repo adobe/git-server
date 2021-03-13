@@ -1,3 +1,10 @@
+## [1.3.15](https://github.com/adobe/git-server/compare/v1.3.14...v1.3.15) (2021-03-13)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([d9e7537](https://github.com/adobe/git-server/commit/d9e7537b7aa2607d6dba20c599d6d5db00f27105))
+
 ## [1.3.14](https://github.com/adobe/git-server/compare/v1.3.13...v1.3.14) (2021-02-25)
 
 
