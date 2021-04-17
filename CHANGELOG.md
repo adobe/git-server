@@ -1,3 +1,10 @@
+## [1.3.19](https://github.com/adobe/git-server/compare/v1.3.18...v1.3.19) (2021-04-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency isomorphic-git to v1.8.2 ([13cede4](https://github.com/adobe/git-server/commit/13cede4f9a5c819818bfcf7dac89cfc8076fcd26))
+
 ## [1.3.18](https://github.com/adobe/git-server/compare/v1.3.17...v1.3.18) (2021-04-12)
 
 
