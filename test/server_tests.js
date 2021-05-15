@@ -22,7 +22,7 @@ const tcpPortUsed = require('tcp-port-used');
 const { context } = require('@adobe/helix-fetch');
 const tmp = require('tmp');
 
-const server = require('../lib/server.js');
+const server = require('../lib/server');
 
 const { fetch, reset } = context({ rejectUnauthorized: false });
 
