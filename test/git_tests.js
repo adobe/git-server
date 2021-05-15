@@ -25,7 +25,7 @@ const {
   getRawContent,
   resolveCommit,
   resolveTree,
-} = require('../lib/git.js');
+} = require('../lib/git');
 
 const TEST_DIR_DEFAULT = path.resolve(__dirname, 'integration/default');
 
