@@ -1,3 +1,10 @@
+## [1.3.25](https://github.com/adobe/git-server/compare/v1.3.24...v1.3.25) (2021-08-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency async to v3.2.1 ([aaf0815](https://github.com/adobe/git-server/commit/aaf0815c04b69e80049d95733fa719a4464e7332))
+
 ## [1.3.24](https://github.com/adobe/git-server/compare/v1.3.23...v1.3.24) (2021-07-17)
 
 
