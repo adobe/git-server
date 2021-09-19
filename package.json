@@ -25,7 +25,7 @@
     "express": "4.17.1",
     "fs-extra": "10.0.0",
     "git-http-backend": "1.0.2",
-    "http-terminator": "3.0.0",
+    "http-terminator": "3.0.3",
     "ignore": "5.1.8",
     "isomorphic-git": "1.10.0",
     "klaw": "3.0.0",
