@@ -1,3 +1,10 @@
+## [1.3.28](https://github.com/adobe/git-server/compare/v1.3.27...v1.3.28) (2021-09-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency http-terminator to v3.0.3 ([9427a17](https://github.com/adobe/git-server/commit/9427a17e42817367eb3b1ca9da899d1394245473))
+
 ## [1.3.27](https://github.com/adobe/git-server/compare/v1.3.26...v1.3.27) (2021-09-02)
 
 
