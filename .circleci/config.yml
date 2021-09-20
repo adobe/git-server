@@ -53,7 +53,7 @@ jobs:
   build:
     parallelism: 1
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:14
     working_directory: ~/repo
 
     steps:
